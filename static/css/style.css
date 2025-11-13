@@ -1,0 +1,83 @@
+/* === TRIDADOS CSS BASE === */
+
+body {
+  background-color: #0b0e14;
+  color: #f0f0f0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #1b1f29;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+h1 {
+  color: #d4af37;
+  font-size: 2.2rem;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+p.subtitle {
+  color: #cfcfcf;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+nav {
+  background-color: #141820;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px 0;
+  border-top: 2px solid #d4af37;
+  border-bottom: 2px solid #d4af37;
+}
+
+nav a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #d4af37;
+}
+
+.main {
+  text-align: center;
+  padding: 50px;
+}
+
+button {
+  background-color: #d4af37;
+  color: #0b0e14;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 10px;
+}
+
+button:hover {
+  background-color: #c09b2f;
+  transform: scale(1.05);
+}
+
+/* Rodapé */
+footer {
+  background-color: #1b1f29;
+  color: #aaa;
+  text-align: center;
+  padding: 15px;
+  border-top: 1px solid #2c3340;
+  font-size: 0.9rem;
+}
