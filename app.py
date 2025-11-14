@@ -4,6 +4,7 @@ import json
 import uuid
 
 app = Flask(__name__)
+app.secret_key = "Suamãeaquelagostosa"
 
 # Criar pastas se não existirem
 if not os.path.exists("data"):
