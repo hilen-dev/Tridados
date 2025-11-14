@@ -97,6 +97,28 @@ def fichas():
 
     return render_template("fichas.html", fichas=fichas_list)
 
+#------------------------------ ARQUETIPOS ----------------------------------
+
+@app.route("/arquetipos")
+def pagina_arquetipos():
+    return render_template("arquetipos.html", arquetipos=arquetipos)
+
+#------------------------------ SALVAR NO JSON ------------------------------
+
+@app.route("/escolher_arquetipo", methods=["POST"])
+def escolher_arquetipo():
+    escolha = request.form["arquetipo"]
+
+    session["ficha"] = session.get("ficha", {})
+    session["ficha"]["arquetipo"] = escolha
+
+    return redirect(url_for("toques_finais"))
+
+#------------------------------ TOQUES FINAIS -------------------------------
+
+@app.route("/toques_finais")
+def toques_finais():
+    return render_template("toques_finais.html", ficha=session.get("ficha", {}))
 
 # ----------------------------- VISUALIZAR FICHA -----------------------------
 
