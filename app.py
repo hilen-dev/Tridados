@@ -2,15 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import json
 import uuid
+from markupsafe import Markup
 
 app = Flask(__name__)
 app.secret_key = "Suamãeaquelagostosa"
 
-# Criar pastas se não existirem
+# Criar pastas
 os.makedirs("data/fichas", exist_ok=True)
 
-from markupsafe import Markup
-
+# Filtro para quebra de linha
 @app.template_filter('nl2br')
 def nl2br(text):
     return Markup(text.replace("\n", "<br>"))
@@ -269,7 +269,6 @@ arquetipos = {
     },
 }
 
-    
 # =============================== HOME ===============================
 
 @app.route("/")
@@ -368,11 +367,5 @@ def homebrew_editor():
     return render_template("homebrew_editor.html")
 
 # =============================== RUN ===============================
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-# ----------------------------- RUN -----------------------------
-
 if __name__ == "__main__":
     app.run(debug=True)
