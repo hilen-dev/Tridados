@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de {{ ficha.nome }}</title>
+    <style>
+        body {
+            background: #0d0f14;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #141820;
+            color: #d4af37;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #161b24;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            color: #d4af37;
+            border-bottom: 1px solid #d4af37;
+            padding-bottom: 5px;
+        }
+
+        .box {
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #1c2330;
+            border-left: 4px solid #d4af37;
+            border-radius: 8px;
+        }
+
+        .dado {
+            font-size: 18px;
+            margin: 6px 0;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            background: none;
+            border: 1px solid #d4af37;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #d4af37;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back:hover {
+            background: #d4af37;
+            color: #141820;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Ficha de {{ ficha.nome }}
+</header>
+
+<main>
+
+    <!-- Informações Básicas -->
+    <div class="box">
+        <h2>Informações Básicas</h2>
+        <p class="dado"><b>Nome:</b> {{ ficha.nome }}</p>
+        <p class="dado"><b>Idade:</b> {{ ficha.idade }}</p>
+    </div>
+
+    <!-- Perícias -->
+    <div class="box">
+        <h2>Perícias</h2>
+        <p>{{ ficha.pericias | nl2br }}</p>
+    </div>
+
+    <!-- Atributos -->
+    <div class="box">
+        <h2>Atributos</h2>
+        <p class="dado"><b>Poder (P):</b> {{ ficha.poder }} — <b>PA:</b> {{ ficha.poder }}</p>
+        <p class="dado"><b>Habilidade (H):</b> {{ ficha.habilidade }} — <b>Mana:</b> {{ ficha.habilidade * 5 }}</p>
+        <p class="dado"><b>Resistência (R):</b> {{ ficha.resistencia }} — <b>Vida:</b> {{ ficha.resistencia * 5 }}</p>
+    </div>
+
+    <!-- Vantagens -->
+    <div class="box">
+        <h2>Vantagens</h2>
+        <p>{{ ficha.vantagens | nl2br }}</p>
+    </div>
+
+    <!-- Histórico -->
+    <div class="box">
+        <h2>Histórico</h2>
+        <p>{{ ficha.historico | nl2br }}</p>
+    </div>
+
+    <a href="/fichas" class="back">⬅ Voltar</a>
+
+</main>
+
+</body>
+</html>
