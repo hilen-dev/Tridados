@@ -10,6 +10,13 @@ if not os.path.exists("data"):
     os.makedirs("data")
 if not os.path.exists("data/fichas"):
     os.makedirs("data/fichas")
+    
+    from markupsafe import Markup
+
+@app.template_filter('nl2br')
+def nl2br(text):
+    return Markup(text.replace("\n", "<br>"))
+
 
 # ----------------------------- ROTAS BÁSICAS -----------------------------
 
