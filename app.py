@@ -18,6 +18,35 @@ if not os.path.exists("data/fichas"):
 def nl2br(text):
     return Markup(text.replace("\n", "<br>"))
 
+arquetipos = {
+    "Humano": {
+        "custo": 0,
+        "descricao": "Adaptáveis, impulsivos e versáteis.",
+        "vantagens": ["Mais Além (Ganho 1 vez por cena por 2PM)"],
+        "desvantagens": []
+    },
+    "Aberrante": {
+        "custo": 1,
+        "descricao": "Criaturas mutantes, bizarras, fora da realidade.",
+        "vantagens": [
+            "Deformidade (+1 no atributo ligado a perícia escolhida)",
+            "Teratismo (1 Técnica Comum)"
+        ],
+        "desvantagens": ["Monstruoso"]
+    },
+    "Abissal": {
+        "custo": 1,
+        "descricao": "Demônios e seres infernais.",
+        "vantagens": [
+            "Ágil",
+            "Desfavor (3PM, alvo sofre Perda)",
+        ],
+        "desvantagens": ["Infame"]
+    },
+
+    # (continua com TODOS — posso incluir o bloco completo se quiser agora)
+}
+
 
 # ----------------------------- ROTAS BÁSICAS -----------------------------
 
