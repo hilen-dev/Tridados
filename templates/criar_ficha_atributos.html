@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Criação de Ficha – Atributos</title>
+
+    <style>
+        body {
+            background: #0d0f14;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #161b24;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+
+        h1 {
+            color: #d4af37;
+            text-align: center;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            background: #1f2430;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            color: #fff;
+        }
+
+        button {
+            width: 100%;
+            background: #d4af37;
+            color: #141820;
+            padding: 12px;
+            margin-top: 25px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #b8952d;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Criação de Ficha – Atributos</h1>
+
+    <form method="POST">
+        <label>Poder (P):</label>
+        <input type="number" name="poder" min="0" required>
+
+        <label>Habilidade (H):</label>
+        <input type="number" name="habilidade" min="0" required>
+
+        <label>Resistência (R):</label>
+        <input type="number" name="resistencia" min="0" required>
+
+        <button type="submit">Próximo: Escolher Arquétipo</button>
+    </form>
+</div>
+
+</body>
+</html>
