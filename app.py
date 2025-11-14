@@ -6,6 +6,18 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+@app.route("/npc")
+def npc():
+    return render_template("npc.html")
+
+@app.route("/campanha")
+def campanha():
+    return render_template("campanha.html")
+
+@app.route("/homebrew_editor")
+def homebrew_editor():
+    return render_template("homebrew_editor.html")
+
 @app.route('/criar_ficha', methods=['GET', 'POST'])
 def criar_ficha():
     if request.method == 'POST':
