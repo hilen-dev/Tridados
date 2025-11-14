@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Criação de Ficha – Arquétipos</title>
+
+    <style>
+        body {
+            background: #0d0f14;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #161b24;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(212,175,55,0.25);
+        }
+
+        h1 {
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .arquetipo {
+            background: #1f2430;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d4af37;
+            border-radius: 6px;
+        }
+
+        .arquetipo h2 {
+            margin: 0;
+            color: #d4af37;
+        }
+
+        button {
+            width: 100%;
+            background: #d4af37;
+            color: #141820;
+            padding: 12px;
+            margin-top: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #b8952d;
+        }
+
+        input[type="radio"] {
+            transform: scale(1.2);
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Escolha seu Arquétipo</h1>
+
+    <form method="POST">
+
+        {% for nome, info in arquetipos.items() %}
+        <div class="arquetipo">
+            <label>
+                <input type="radio" name="arquetipo" value="{{ nome }}" required>
+                <h2>{{ nome }} ({{ info.custo }}pt)</h2>
+            </label>
+
+            <p>{{ info.descricao }}</p>
+
+            <p><b>Vantagens:</b></p>
+            <ul>
+                {% for v in info.vantagens %}
+                <li>{{ v }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if info.desvantagens %}
+            <p><b>Desvantagens:</b></p>
+            <ul>
+                {% for d in info.desvantagens %}
+                <li>{{ d }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <button type="submit">Próximo: Toques Finais</button>
+    </form>
+
+</div>
+
+</body>
+</html>
