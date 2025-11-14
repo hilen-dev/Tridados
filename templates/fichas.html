@@ -4,19 +4,78 @@
     <meta charset="UTF-8">
     <title>Fichas Criadas</title>
     <style>
-        body { background: #0d0f14; color: #f0f0f0; font-family: Arial; }
-        header { background: #141820; color: #d4af37; padding: 20px; text-align: center; }
-        main { max-width: 900px; margin: auto; background: #161b24; padding: 20px; border-radius: 10px; }
-        a { color: #d4af37; font-weight: bold; }
+        body {
+            background: #0d0f14;
+            color: #f0f0f0;
+            font-family: Arial;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #141820;
+            color: #d4af37;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #161b24;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .ficha {
+            background: #1c2330;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #d4af37;
+        }
+
+        a {
+            color: #d4af37;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
 
-<header><h1>Fichas Criadas</h1></header>
+<header>
+    <h1>Fichas Criadas</h1>
+</header>
 
 <main>
-    <p>Nenhuma ficha armazenada ainda.</p>
-    <a href="/">⬅ Voltar ao início</a>
+
+    {% if fichas|length == 0 %}
+        <p>Nenhuma ficha armazenada ainda.</p>
+
+    {% else %}
+        {% for ficha in fichas %}
+            <div class="ficha">
+                <h2>{{ ficha.nome }}</h2>
+                <p><b>Idade:</b> {{ ficha.idade }}</p>
+                <p><b>Perícias:</b> {{ ficha.pericias }}</p>
+
+                <a href="/ficha/{{ ficha.id }}">➡ Ver ficha completa</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <a href="/" class="back">⬅ Voltar ao início</a>
+
 </main>
 
 </body>
