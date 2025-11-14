@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Ficha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d0d0d;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
 
+        h1 {
+            text-align: center;
+            color: #00c8ff;
+        }
+
+        form {
+            max-width: 700px;
+            margin: auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.3);
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            margin-top: 5px;
+            border-radius: 4px;
+            background: #2b2b2b;
+            color: white;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .result-box {
+            background: #111;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            background: #00c8ff;
+            padding: 12px;
+            border: none;
+            color: black;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00e1ff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Criação de Ficha</h1>
+
+    <form method="POST">
+
+        <!-- Nome -->
+        <label>Nome do Personagem:</label>
+        <input type="text" name="nome" required>
+
+        <!-- Idade -->
+        <label>Idade:</label>
+        <input type="number" name="idade" required>
+
+        <!-- Perícias -->
+        <label>Perícias:</label>
+        <textarea name="pericias" placeholder="Liste as perícias..."></textarea>
+
+        <!-- Atributos -->
+        <label>Atributos:</label>
+        <div class="grid">
+            <div>
+                <label>Poder (P):</label>
+                <input type="number" id="poder" name="poder" min="0" value="0">
+            </div>
+
+            <div>
+                <label>Habilidade (H):</label>
+                <input type="number" id="habilidade" name="habilidade" min="0" value="0">
+            </div>
+
+            <div>
+                <label>Resistência (R):</label>
+                <input type="number" id="resistencia" name="resistencia" min="0" value="0">
+            </div>
+        </div>
+
+        <!-- Resultados automáticos -->
+        <div class="result-box">
+            <p><b>Pontos de Ação (PA):</b> <span id="pa">0</span></p>
+            <p><b>Mana (H × 5):</b> <span id="mana">0</span></p>
+            <p><b>Vida (R × 5):</b> <span id="vida">0</span></p>
+        </div>
+
+        <!-- Vantagens -->
+        <label>Vantagens:</label>
+        <textarea name="vantagens" placeholder="Descreva as vantagens..."></textarea>
+
+        <!-- Histórico -->
+        <label>Histórico:</label>
+        <textarea name="historico" placeholder="História do personagem..."></textarea>
+
+        <!-- Botão salvar -->
+        <button type="submit">Salvar Ficha</button>
+
+    </form>
+
+
+    <script>
+        // Atualiza automaticamente PA, Mana e Vida
+        function atualizarValores() {
+            let p = parseInt(document.getElementById("poder").value) || 0;
+            let h = parseInt(document.getElementById("habilidade").value) || 0;
+            let r = parseInt(document.getElementById("resistencia").value) || 0;
+
+            document.getElementById("pa").textContent = p;       // PA = P
+            document.getElementById("mana").textContent = h * 5; // Mana
+            document.getElementById("vida").textContent = r * 5; // Vida
+        }
+
+        document.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", atualizarValores);
+        });
+    </script>
+
+</body>
+</html>
