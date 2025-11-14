@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Escolher Arquétipo</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        body {
+            background: #111;
+            color: #f5d389; /* dourado opaco */
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #f5d389;
+        }
+
+        .lista-arquetipos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border: 2px solid #8a6f3c;
+            padding: 20px;
+            border-radius: 12px;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 10px #8a6f3c;
+        }
+
+        .btn-escolher {
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: #8a6f3c;
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-escolher:hover {
+            background: #b28a50;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Escolha seu Arquétipo</h1>
+
+    <div class="lista-arquetipos">
+        {% for nome, dados in arquetipos.items() %}
+        <div class="card">
+            <h2>{{ nome }} ({{ dados.custo }}pt)</h2>
+            <p>{{ dados.descricao }}</p>
+
+            <h4>Vantagens:</h4>
+            <ul>
+                {% for v in dados.vantagens %}
+                <li>{{ v }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if dados.desvantagens %}
+            <h4>Desvantagens:</h4>
+            <ul>
+                {% for d in dados.desvantagens %}
+                <li>{{ d }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form action="/escolher_arquetipo" method="POST">
+                <input type="hidden" name="arquetipo" value="{{ nome }}">
+                <button type="submit" class="btn-escolher">Escolher</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
