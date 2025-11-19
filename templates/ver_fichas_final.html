@@ -1,0 +1,419 @@
+<!-- templates/criar_ficha_final.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Toques Finais — Criação de Ficha | Tridados</title>
+<style>
+  :root{
+    --bg:#0d0f14; --card:#161b24; --accent:#d4af37; --muted:#aeb3b8; --panel:#1c2330;
+  }
+  body{background:var(--bg); color:#f5f5f5; font-family: "Segoe UI", Roboto, Arial; margin:0; padding:22px;}
+  header{background:#141820; padding:20px; text-align:center; border-bottom:4px solid rgba(0,0,0,0.2)}
+  header h1{margin:0; color:var(--accent); letter-spacing:2px;}
+  main{max-width:1100px; margin:26px auto;}
+  .card{background:var(--card); padding:18px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.5); margin-bottom:18px; border-left:6px solid var(--accent)}
+  .grid{display:grid; grid-template-columns: 1fr 340px; gap:18px;}
+  label{display:block; font-size:14px; color:var(--muted); margin-bottom:6px;}
+  input[type="text"], input[type="number"], textarea, select{
+    width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:#0f1318; color:#fff;
+  }
+  textarea{min-height:110px; resize:vertical;}
+  .attr-row{display:flex; gap:10px;}
+  .attr{background:#0f1318; padding:12px; border-radius:8px; text-align:center;}
+  .attr b{display:block; font-size:18px; color:var(--accent);}
+  .small{font-size:13px; color:var(--muted);}
+  .accordion{margin-top:8px;}
+  .acc-item{background:var(--panel); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+  .acc-header{padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;}
+  .acc-title{font-weight:700; color:var(--accent);}
+  .acc-body{padding:12px; display:none; border-top:1px solid rgba(255,255,255,0.03);}
+  .list-scroll{max-height:280px; overflow:auto; padding-right:6px;}
+  .check-row{display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02);}
+  .check-row:last-child{border-bottom:none;}
+  .points{font-weight:800; font-size:20px; color:var(--accent);}
+  .warn{color:#ffcc00; font-weight:700;}
+  .danger{color:#ff6b6b; font-weight:800;}
+  .actions{display:flex; gap:12px; margin-top:14px;}
+  .btn{background:var(--accent); color:#141820; border:none; padding:10px 16px; border-radius:10px; cursor:pointer; font-weight:700;}
+  .btn.ghost{background:transparent; color:var(--accent); border:1px solid rgba(212,175,55,0.18)}
+  .meta{font-size:13px; color:var(--muted); margin-top:8px;}
+  footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px;}
+  @media(max-width:900px){ .grid{grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>TRIDADOS — Toques Finais</h1>
+  <div class="small">Finalize a ficha — escolha perícias, vantagens e desvantagens. O contador atualiza em tempo real.</div>
+</header>
+
+<main>
+  <form id="finalForm" method="POST">
+    <div class="grid">
+
+      <!-- LEFT: formulário -->
+      <div>
+        <div class="card">
+          <h2 style="margin:0 0 8px 0; color:var(--accent)">Dados Básicos</h2>
+
+          <label>Nome do Personagem</label>
+          <input type="text" name="nome" id="nome" value="{{ ficha.nome if ficha and ficha.nome is defined else '' }}" required>
+
+          <label style="margin-top:10px">Idade</label>
+          <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
+
+          <div style="margin-top:12px;" class="attr-row">
+            <div class="attr" style="flex:1">
+              <div class="small">Poder (P)</div>
+              <b>{{ ficha.poder if ficha and ficha.poder is defined else 0 }}</b>
+              <div class="small">PA = P</div>
+            </div>
+            <div class="attr" style="flex:1">
+              <div class="small">Habilidade (H)</div>
+              <b>{{ ficha.habilidade if ficha and ficha.habilidade is defined else 0 }}</b>
+              <div class="small">Mana = H × 5</div>
+            </div>
+            <div class="attr" style="flex:1">
+              <div class="small">Resistência (R)</div>
+              <b>{{ ficha.resistencia if ficha and ficha.resistencia is defined else 0 }}</b>
+              <div class="small">Vida = R × 5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perícias -->
+        <div class="card">
+          <h2 style="margin:0 0 8px 0; color:var(--accent)">Perícias (1 ponto cada)</h2>
+          <div class="small">Selecione as perícias que o personagem possui.</div>
+          <div class="accordion">
+            <div class="acc-item">
+              <div class="acc-header" onclick="toggleAcc(this)">
+                <div class="acc-title">Perícias Disponíveis</div>
+                <div class="small">Toque para abrir</div>
+              </div>
+              <div class="acc-body">
+                <div class="list-scroll" id="periciasList">
+                  <!-- JS vai injetar as perícias aqui -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vantagens e Desvantagens -->
+        <div class="card">
+          <h2 style="margin:0 0 8px 0; color:var(--accent)">Vantagens (custos mostrados)</h2>
+          <div class="small">Selecione vantagens — custo somado aos pontos.</div>
+          <div class="accordion">
+            <div class="acc-item">
+              <div class="acc-header" onclick="toggleAcc(this)">
+                <div class="acc-title">Lista de Vantagens</div>
+                <div class="small">Toque para abrir</div>
+              </div>
+              <div class="acc-body">
+                <div class="list-scroll" id="vantagensList"></div>
+              </div>
+            </div>
+          </div>
+
+          <h2 style="margin:18px 0 8px 0; color:var(--accent)">Desvantagens (dão pontos)</h2>
+          <div class="small">Selecionar desvantagens adiciona pontos disponíveis (até -2 acumulado).</div>
+          <div class="accordion">
+            <div class="acc-item">
+              <div class="acc-header" onclick="toggleAcc(this)">
+                <div class="acc-title">Lista de Desvantagens</div>
+                <div class="small">Toque para abrir</div>
+              </div>
+              <div class="acc-body">
+                <div class="list-scroll" id="desvList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Histórico / Notas -->
+        <div class="card">
+          <h2 style="margin:0 0 8px 0; color:var(--accent)">Histórico / Notas</h2>
+          <label>Escreva uma breve história</label>
+          <textarea name="historico" id="historico">{{ ficha.historico if ficha and ficha.historico is defined else '' }}</textarea>
+
+          <div class="meta">Se quiser exportar as seleções como texto (para revisar), use o botão de Visualizar antes de salvar.</div>
+        </div>
+
+      </div><!-- fim left -->
+
+      <!-- RIGHT: painel de controle -->
+      <aside>
+        <div class="card">
+          <h2 style="margin:0 0 6px 0; color:var(--accent)">Contador de Pontos</h2>
+
+          <label>Pontos iniciais (manual)</label>
+          <input type="number" id="initialPoints" value="10" min="0" />
+
+          <div style="margin-top:12px">
+            <div class="small">Perícias selecionadas (1pt cada):</div>
+            <div style="margin-top:6px"><span id="periciasCost">0</span> pts</div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="small">Vantagens (custos):</div>
+            <div style="margin-top:6px"><span id="vantCost">0</span> pts</div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="small">Desvantagens (pontos ganhos):</div>
+            <div style="margin-top:6px"><span id="desvGain">0</span> pts</div>
+          </div>
+
+          <hr style="border:none; border-top:1px solid rgba(255,255,255,0.03); margin:12px 0" />
+
+          <div>
+            <div class="small">Pontos Restantes</div>
+            <div class="points" id="pointsLeft">10</div>
+            <div id="statusMsg" class="meta"></div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn" onclick="prepareSubmit()">Visualizar / Salvar</button>
+            <button type="button" class="btn ghost" onclick="resetSelections()">Limpar</button>
+          </div>
+
+          <div class="meta" style="margin-top:10px">
+            Regras: Perícia = 1 ponto. Vantagens têm custos variados (1–3). Desvantagens dão pontos (valores mostrados entre parênteses).
+            Você optou por **avisar** ao exceder os pontos — o site permitirá submeter com saldo negativo.
+          </div>
+        </div>
+      </aside>
+
+    </div> <!-- fim grid -->
+
+    <!-- hidden inputs que serão preenchidos pelo JS -->
+    <input type="hidden" name="pericias" id="periciasHidden" value="">
+    <input type="hidden" name="vantagens" id="vantagensHidden" value="">
+    <input type="hidden" name="desvantagens" id="desvantagensHidden" value="">
+
+  </form>
+</main>
+
+<footer>Tridados — 3DeT Victory • Toques Finais</footer>
+
+<script>
+/* ---------- Dados base (perícias + seleções) ---------- */
+const pericias = [
+  "Animais","Arte","Esporte","Influência","Luta","Manha","Máquinas",
+  "Medicina","Mística","Percepção","Saber","Sobrevivência"
+];
+
+/* vantagem: {key, label, cost} */
+const vantagens = [
+  {k:"Aceleração", l:"Aceleração (1pt)", c:1},
+  {k:"+Ação", l:"+Ação (+2PA por compra) (1pt cada)", c:1},
+  {k:"Ágil", l:"Ágil (1pt)", c:1},
+  {k:"Ajudante", l:"Ajudante (1pt cada)", c:1},
+  {k:"Alcance", l:"Alcance (1-2pt)", c:1},
+  {k:"Anulação", l:"Anulação (2pt)", c:2},
+  {k:"AtaqueEspecial", l:"Ataque Especial (1pt cada efeito)", c:1},
+  {k:"Base", l:"Base (1pt)", c:1},
+  {k:"Brutal", l:"Brutal (1pt cada variação)", c:1},
+  {k:"Carismático", l:"Carismático (1pt)", c:1},
+  {k:"Cura", l:"Cura (1pt)", c:1},
+  {k:"DefesaEspecial", l:"Defesa Especial (1pt cada efeito)", c:1},
+  {k:"Forte", l:"Forte (1pt)", c:1},
+  {k:"Gênio", l:"Gênio (1pt)", c:1},
+  {k:"Magia", l:"Magia (2pt)", c:2},
+  {k:"+Mana", l:"+Mana (1pt cada +10PM)", c:1},
+  {k:"+Vida", l:"+Vida (1pt cada +10PV)", c:1},
+  {k:"Vigoroso", l:"Vigoroso (1pt)", c:1},
+  {k:"Voo", l:"Voo (1pt)", c:1},
+  {k:"Regeneração1", l:"Regeneração (1pt: +1PV/turno)", c:1},
+  {k:"Regeneração2", l:"Regeneração (2pt: +3PV/turno)", c:2},
+  {k:"Riqueza2", l:"Riqueza (2pt)", c:2},
+  {k:"Riqueza4", l:"Riqueza (4pt)", c:4},
+  {k:"Riqueza6", l:"Riqueza (6pt)", c:6}
+];
+
+/* desvantagens: {key,label,gain} */
+const desvantagens = [
+  {k:"Ambiente", l:"Ambiente (–1pt)", g:1},
+  {k:"Amnésia", l:"Amnésia (–2pt)", g:2},
+  {k:"Antipático", l:"Antipático (–1pt)", g:1},
+  {k:"Assombrado1", l:"Assombrado (–1pt)", g:1},
+  {k:"Assombrado2", l:"Assombrado (–2pt)", g:2},
+  {k:"Atrapalhado", l:"Atrapalhado (–1pt)", g:1},
+  {k:"Bateria", l:"Bateria (–1pt)", g:1},
+  {k:"Código", l:"Código (–1pt cada)", g:1},
+  {k:"Dependência", l:"Dependência (–2pt)", g:2},
+  {k:"Diferente", l:"Diferente (–1pt)", g:1},
+  {k:"Fraco", l:"Fracote (–1pt)", g:1},
+  {k:"Frágil", l:"Frágil (–1pt)", g:1},
+  {k:"Fraqueza1", l:"Fraqueza (–1pt)", g:1},
+  {k:"Fraqueza2", l:"Fraqueza (–2pt)", g:2},
+  {k:"Fobia", l:"Fobia (–1pt)", g:1},
+  {k:"Inapto", l:"Inapto (–1pt)", g:1},
+  {k:"Indeciso", l:"Indeciso (–1pt)", g:1},
+  {k:"Infame", l:"Infame (–1pt)", g:1},
+  {k:"Lento", l:"Lento (–1pt)", g:1},
+  {k:"Monstruoso", l:"Monstruoso (–1pt)", g:1},
+  {k:"Pacifista1", l:"Pacifista (–1pt)", g:1},
+  {k:"Pacifista2", l:"Pacifista (–2pt)", g:2},
+  {k:"Pobreza", l:"Pobreza (–1pt)", g:1},
+  {k:"PontoFraco", l:"Ponto Fraco (–1pt)", g:1},
+  {k:"Protegido", l:"Protegido (–1pt)", g:1},
+  {k:"Restricao1", l:"Restrição (–1pt)", g:1},
+  {k:"Restricao2", l:"Restrição (–2pt)", g:2},
+  {k:"SemVida", l:"Sem Vida (–2pt)", g:2},
+  {k:"Tapado", l:"Tapado (–1pt)", g:1},
+  {k:"Transtorno", l:"Transtorno (–1pt)", g:1},
+  {k:"Utensilio1", l:"Utensílio (–1pt)", g:1},
+  {k:"Utensilio2", l:"Utensílio (–2pt)", g:2}
+];
+
+/* ---------- render lists ---------- */
+function makeCheckbox(id, name, label, valueAttr){
+  const div = document.createElement('div');
+  div.className = 'check-row';
+  div.innerHTML = `
+    <input type="checkbox" data-key="${id}" />
+    <label style="flex:1">${label}</label>
+    <div style="width:56px; text-align:right;"><span class="small">${valueAttr}</span></div>
+  `;
+  return div;
+}
+
+function renderLists(){
+  const pList = document.getElementById('periciasList');
+  pericias.forEach(p => {
+    const el = makeCheckbox('p:'+p, 'pericia', p, '1pt');
+    pList.appendChild(el);
+  });
+
+  const vList = document.getElementById('vantagensList');
+  vantagens.forEach(v => {
+    const el = makeCheckbox('v:'+v.k, 'vant', `${v.l}`, `${v.c}pt`);
+    vList.appendChild(el);
+  });
+
+  const dList = document.getElementById('desvList');
+  desvantagens.forEach(d => {
+    const el = makeCheckbox('d:'+d.k, 'desv', `${d.l}`, `+${d.g}pt`);
+    dList.appendChild(el);
+  });
+
+  // attach change listeners to all created checkboxes
+  document.querySelectorAll('.check-row input[type="checkbox"]').forEach(cb=>{
+    cb.addEventListener('change', computePoints);
+  });
+}
+renderLists();
+
+/* ---------- accordion ---------- */
+function toggleAcc(headerEl){
+  const body = headerEl.nextElementSibling;
+  const open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+}
+
+/* ---------- compute points ---------- */
+function computePoints(){
+  const initial = parseInt(document.getElementById('initialPoints').value) || 0;
+  // pericias cost
+  const perChecked = Array.from(document.querySelectorAll('#periciasList input[type="checkbox"]:checked'));
+  const perCost = perChecked.length * 1;
+  document.getElementById('periciasCost').textContent = perCost;
+
+  // vantagens
+  let vantCost = 0;
+  const vantChecked = Array.from(document.querySelectorAll('#vantagensList input[type="checkbox"]:checked'));
+  vantChecked.forEach(cb=>{
+    const key = cb.dataset.key.replace('v:','');
+    const v = vantagens.find(x=>x.k === key);
+    if(v) vantCost += v.c;
+  });
+  document.getElementById('vantCost').textContent = vantCost;
+
+  // desvantagens
+  let desvGain = 0;
+  const desvChecked = Array.from(document.querySelectorAll('#desvList input[type="checkbox"]:checked'));
+  desvChecked.forEach(cb=>{
+    const key = cb.dataset.key.replace('d:','');
+    const d = desvantagens.find(x=>x.k === key);
+    if(d) desvGain += d.g;
+  });
+  document.getElementById('desvGain').textContent = desvGain;
+
+  const pointsLeft = initial - (perCost + vantCost - desvGain);
+  const leftEl = document.getElementById('pointsLeft');
+  leftEl.textContent = pointsLeft;
+
+  const status = document.getElementById('statusMsg');
+  if(pointsLeft < 0){
+    status.innerHTML = `<span class="warn">Atenção:</span> Você está <span class="danger">${Math.abs(pointsLeft)}</span> pontos em débito. (aviso ativado)`;
+  } else {
+    status.innerHTML = `<span class="small">Tudo certo — você tem <strong>${pointsLeft}</strong> pontos livres.</span>`;
+  }
+}
+
+/* recompute quando muda initial */
+document.getElementById('initialPoints').addEventListener('input', computePoints);
+
+/* ---------- preparar submissão: montar strings e submeter ---------- */
+function prepareSubmit(){
+  // montar pericias
+  const selPer = Array.from(document.querySelectorAll('#periciasList input[type="checkbox"]:checked'))
+    .map(cb => cb.dataset.key.replace('p:',''));
+  document.getElementById('periciasHidden').value = selPer.join(', ');
+
+  // vantagens
+  const selVant = Array.from(document.querySelectorAll('#vantagensList input[type="checkbox"]:checked'))
+    .map(cb => {
+      const key = cb.dataset.key.replace('v:','');
+      const v = vantagens.find(x=>x.k===key);
+      return v ? `${v.l}` : key;
+    });
+  document.getElementById('vantagensHidden').value = selVant.join(', ');
+
+  // desvantagens
+  const selDesv = Array.from(document.querySelectorAll('#desvList input[type="checkbox"]:checked'))
+    .map(cb => {
+      const key = cb.dataset.key.replace('d:','');
+      const d = desvantagens.find(x=>x.k===key);
+      return d ? `${d.l}` : key;
+    });
+  document.getElementById('desvantagensHidden').value = selDesv.join(', ');
+
+  computePoints(); // atualiza mensagens
+
+  // mostra um resumo modal simples (confirmar)
+  const resumo = `
+Resumo:
+Nome: ${document.getElementById('nome').value || '(sem nome)'}
+Perícias: ${document.getElementById('periciasHidden').value || '(nenhuma)'}
+Vantagens: ${document.getElementById('vantagensHidden').value || '(nenhuma)'}
+Desvantagens: ${document.getElementById('desvantagensHidden').value || '(nenhuma)'}
+Pontos restantes: ${document.getElementById('pointsLeft').textContent}
+
+Clique OK para salvar a ficha (se exceder, será permitida; lembre-se do aviso).
+  `;
+  if(confirm(resumo)){
+    // submete o form para /criar_ficha/final (rota existente em app.py)
+    document.getElementById('finalForm').action = "{{ url_for('criar_ficha_final') }}";
+    document.getElementById('finalForm').submit();
+  }
+}
+
+/* limpar */
+function resetSelections(){
+  document.querySelectorAll('.check-row input[type="checkbox"]').forEach(cb => cb.checked = false);
+  document.getElementById('periciasHidden').value = '';
+  document.getElementById('vantagensHidden').value = '';
+  document.getElementById('desvantagensHidden').value = '';
+  computePoints();
+}
+
+/* inicializa */
+computePoints();
+</script>
+</body>
+</html>
