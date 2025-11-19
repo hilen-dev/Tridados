@@ -131,42 +131,42 @@
       <button class="action" onclick="openTab('regras')">Ver Regras</button>
     </section>
 
-<!-- JOGADORES -->
-<section id="jogadores">
-  <h2>Área dos Jogadores</h2>
-  <p>Crie e gerencie suas fichas de personagem de forma automática.</p>
-  <ul>
-    <li>Distribua 10 pontos entre atributos.</li>
-    <li>Escolha perícias e vantagens.</li>
-    <li>Use desvantagens para equilibrar o custo.</li>
-  </ul>
+    <!-- JOGADORES -->
+    <section id="jogadores">
+      <h2>Área dos Jogadores</h2>
+      <p>Crie e gerencie suas fichas de personagem de forma automática.</p>
+      <ul>
+        <li>Distribua 10 pontos entre atributos.</li>
+        <li>Escolha perícias e vantagens.</li>
+        <li>Use desvantagens para equilibrar o custo.</li>
+      </ul>
 
-  <button class="action" onclick="window.location.href='/criar_ficha'">
-      Iniciar Criação de Ficha
-  </button>
+      <button class="action" onclick="window.location.href='/criar_ficha/atributos'">
+        Iniciar Criação de Ficha
+      </button>
 
-  <button class="action" onclick="window.location.href='/fichas'">
-      Ver Fichas Criadas
-  </button>
-</section>
+      <button class="action" onclick="window.location.href='/fichas'">
+        Ver Fichas Criadas
+      </button>
+    </section>
 
-<!-- MESTRES -->
-<section id="mestres">
-  <h2>Área dos Mestres</h2>
-  <p>Ferramentas para gerenciar sessões, NPCs e recursos de campanha.</p>
+    <!-- MESTRES -->
+    <section id="mestres">
+      <h2>Área dos Mestres</h2>
+      <p>Ferramentas para gerenciar sessões, NPCs e recursos de campanha.</p>
 
-  <button class="action" onclick="window.location.href='/npc'">
-      Criar NPC
-  </button>
+      <button class="action" onclick="window.location.href='/npc'">
+        Criar NPC
+      </button>
 
-  <button class="action" onclick="window.location.href='/campanha'">
-      Criar Campanha
-  </button>
+      <button class="action" onclick="window.location.href='/campanha'">
+        Criar Campanha
+      </button>
 
-  <button class="action" onclick="window.location.href='/fichas'">
-      Visualizar Fichas dos Jogadores
-  </button>
-</section>
+      <button class="action" onclick="window.location.href='/fichas'">
+        Visualizar Fichas dos Jogadores
+      </button>
+    </section>
 
     <!-- REGRAS -->
     <section id="regras">
@@ -179,17 +179,19 @@
       </ul>
       <p>Use o bom senso e siga as orientações do mestre da mesa.</p>
     </section>
-    
-<!-- HOMEBREW -->
-<section id="homebrew">
-  <h2>Área Homebrew</h2>
-  <p>Crie seus próprios arquétipos, vantagens, perícias e regras personalizadas, Esta área é feita para liberdade total de criação dentro do 3DeT Victory.</p>
 
-  <button class="action" onclick="window.location.href='/homebrew_editor'">
-      Criar Novo Conteúdo
-  </button>
-</section>
-    
+    <!-- HOMEBREW -->
+    <section id="homebrew">
+      <h2>Área Homebrew</h2>
+      <p>Crie seus próprios arquétipos, vantagens, perícias e regras personalizadas.</p>
+
+      <button class="action" onclick="window.location.href='/homebrew_editor'">
+        Criar Novo Conteúdo
+      </button>
+    </section>
+
+  </main>
+
   <script>
     const buttons = document.querySelectorAll('.tab-button');
     const sections = document.querySelectorAll('section');
@@ -208,5 +210,6 @@
       });
     });
   </script>
+
 </body>
 </html>
