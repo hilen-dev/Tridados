@@ -91,9 +91,9 @@
     <!-- Atributos -->
     <div class="box">
         <h2>Atributos</h2>
-        <p class="dado"><b>Poder (P):</b> {{ ficha.poder }} — <b>PA:</b> {{ ficha.poder }}</p>
-        <p class="dado"><b>Habilidade (H):</b> {{ ficha.habilidade }} — <b>Mana:</b> {{ ficha.habilidade * 5 }}</p>
-        <p class="dado"><b>Resistência (R):</b> {{ ficha.resistencia }} — <b>Vida:</b> {{ ficha.resistencia * 5 }}</p>
+       <p class="dado"><b>Poder (P):</b> {{ ficha.poder|int }} — <b>PA:</b> {{ ficha.poder|int }}</p>
+       <p class="dado"><b>Habilidade (H):</b> {{ ficha.habilidade|int }} — <b>Mana:</b> {{ ficha.habilidade|int * 5 }}</p>
+       <p class="dado"><b>Resistência (R):</b> {{ ficha.resistencia|int }} — <b>Vida:</b> {{ ficha.resistencia|int * 5 }}</p>
     </div>
 
     <!-- Vantagens -->
