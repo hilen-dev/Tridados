@@ -1,268 +1,148 @@
-<!-- templates/criar_ficha_final.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Toques Finais — Criação de Ficha | Tridados</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ ficha.nome }} — Ficha</title>
+
 <style>
   :root{
-    --bg:#0d0f14; --card:#161b24; --accent:#d4af37; --muted:#aeb3b8; --panel:#1c2330;
+    --bg:#0d0f14;
+    --card:#161b24;
+    --panel:#1c2330;
+    --accent:#d4af37;
+    --muted:#aeb3b8;
   }
-  body{background:var(--bg); color:#f5f5f5; font-family: "Segoe UI", Roboto, Arial; margin:0; padding:22px;}
-  header{background:#141820; padding:20px; text-align:center; border-bottom:4px solid rgba(0,0,0,0.2)}
-  header h1{margin:0; color:var(--accent); letter-spacing:2px;}
-  main{max-width:1100px; margin:26px auto;}
-  .card{background:var(--card); padding:18px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.5); margin-bottom:18px; border-left:6px solid var(--accent)}
-  .grid{display:grid; grid-template-columns: 1fr 340px; gap:18px;}
-  label{display:block; font-size:14px; color:var(--muted); margin-bottom:6px;}
-  input[type="text"], input[type="number"], textarea, select{
-    width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:#0f1318; color:#fff;
+  body{
+    background:var(--bg);
+    color:#f0f0f0;
+    font-family:"Segoe UI",Roboto,Arial;
+    margin:0;
   }
-  textarea{min-height:110px; resize:vertical;}
-  .attr-row{display:flex; gap:10px;}
-  .attr{background:#0f1318; padding:12px; border-radius:8px; text-align:center;}
-  .attr b{display:block; font-size:18px; color:var(--accent);}
-  .small{font-size:13px; color:var(--muted);}
-  .accordion{margin-top:8px;}
-  .acc-item{background:var(--panel); border-radius:8px; margin-bottom:8px; overflow:hidden;}
-  .acc-header{padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;}
-  .acc-title{font-weight:700; color:var(--accent);}
-  .acc-body{padding:12px; display:none; border-top:1px solid rgba(255,255,255,0.03);}
-  .list-scroll{max-height:280px; overflow:auto; padding-right:6px;}
-  .check-row{display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.02);}
-  .check-row:last-child{border-bottom:none;}
-  .points{font-weight:800; font-size:20px; color:var(--accent);}
-  .warn{color:#ffcc00; font-weight:700;}
-  .danger{color:#ff6b6b; font-weight:800;}
-  .actions{display:flex; gap:12px; margin-top:14px;}
-  .btn{background:var(--accent); color:#141820; border:none; padding:10px 16px; border-radius:10px; cursor:pointer; font-weight:700;}
-  .btn.ghost{background:transparent; color:var(--accent); border:1px solid rgba(212,175,55,0.18)}
-  .meta{font-size:13px; color:var(--muted); margin-top:8px;}
-  footer{margin-top:22px; text-align:center; color:var(--muted); font-size:13px;}
-  @media(max-width:900px){ .grid{grid-template-columns:1fr; } }
+  header{
+    background:#141820;
+    padding:25px;
+    text-align:center;
+    border-bottom:3px solid rgba(212,175,55,0.2);
+  }
+  header h1{
+    margin:0;
+    color:var(--accent);
+    font-size:28px;
+    letter-spacing:2px;
+  }
+  main{
+    max-width:1000px;
+    margin:30px auto;
+    padding:20px;
+  }
+  .card{
+    background:var(--card);
+    padding:22px;
+    border-radius:12px;
+    border-left:6px solid var(--accent);
+    margin-bottom:20px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+  }
+  h2{
+    margin:0 0 10px 0;
+    color:var(--accent);
+    border-bottom:1px solid rgba(212,175,55,0.3);
+    padding-bottom:5px;
+  }
+  .line{ margin:6px 0; font-size:15px; }
+  .label{ color:var(--accent); font-weight:bold; }
+
+  .attr-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:15px;
+    margin-top:10px;
+  }
+  .attr-box{
+    background:var(--panel);
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+  }
+  .attr-box b{ font-size:22px; color:var(--accent); }
+  .small{ color:var(--muted); font-size:12px; }
+  .back{
+    display:inline-block;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    padding:10px 20px;
+    border-radius:10px;
+    margin-top:20px;
+    text-decoration:none;
+    transition:0.3s;
+  }
+  .back:hover{ background:var(--accent); color:#141820; }
 </style>
 </head>
+
 <body>
-<header>
-  <h1>TRIDADOS — Toques Finais</h1>
-  <div class="small">Finalize a ficha — escolha perícias, vantagens e desvantagens. O contador atualiza em tempo real.</div>
-</header>
-
-<main>
-  <form id="finalForm" method="POST">
-    <div class="grid">
-
-      <!-- LEFT: formulário -->
-      <div>
-        <div class="card">
-          <h2 style="margin:0 0 8px 0; color:var(--accent)">Dados Básicos</h2>
-
-          <label>Nome do Personagem</label>
-          <input type="text" name="nome" id="nome" value="{{ ficha.nome if ficha and ficha.nome is defined else '' }}" required>
-
-          <label style="margin-top:10px">Idade</label>
-          <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
-
-          <div style="margin-top:12px;" class="attr-row">
-            <div class="attr" style="flex:1">
-              <div class="small">Poder (P)</div>
-              <b>{{ ficha.poder if ficha and ficha.poder is defined else 0 }}</b>
-              <div class="small">PA = P</div>
-            </div>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha — {{ ficha.nome }}</title>
-
-    <style>
-        :root {
-            --bg:#0d0f14; 
-            --panel:#161b24; 
-            --accent:#d4af37; 
-            --sub:#aeb3b8;
-            --card:#1c2330;
-        }
-
-        body {
-            background: var(--bg);
-            color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background: #141820;
-            padding: 20px;
-            border-bottom: 3px solid #0004;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-            color: var(--accent);
-            letter-spacing: 2px;
-        }
-
-        main {
-            max-width: 950px;
-            margin: 35px auto;
-            padding: 22px;
-        }
-
-        .card {
-            background: var(--panel);
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 6px solid var(--accent);
-            margin-bottom: 25px;
-            box-shadow: 0 6px 16px #0005;
-        }
-
-        h2 {
-            margin: 0 0 12px 0;
-            color: var(--accent);
-            border-bottom: 1px solid var(--accent);
-            padding-bottom: 4px;
-        }
-
-        .info-line {
-            margin: 6px 0;
-            font-size: 16px;
-        }
-
-        .attr-box {
-            display: flex;
-            gap: 14px;
-            margin-top: 10px;
-        }
-
-        .attr {
-            flex: 1;
-            background: var(--card);
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .attr b {
-            color: var(--accent);
-            font-size: 22px;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 10px 24px;
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            border-radius: 10px;
-            text-decoration: none;
-            transition: .25s;
-        }
-
-        .back:hover {
-            background: var(--accent);
-            color: #141820;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            background: #0f1318;
-            padding: 12px;
-            border-radius: 8px;
-            line-height: 1.4;
-        }
-    </style>
-
-</head>
-<body>
-
-<header>
-    <h1>Ficha de {{ ficha.nome }}</h1>
-</header>
+<header><h1>Ficha de {{ ficha.nome }}</h1></header>
 
 <main>
 
-    <!-- Dados Básicos -->
-    <div class="card">
-        <h2>Informações Básicas</h2>
-        <div class="info-line"><b>Nome:</b> {{ ficha.nome }}</div>
-        <div class="info-line"><b>Idade:</b> {{ ficha.idade }}</div>
-        <div class="info-line"><b>Arquétipo:</b> {{ ficha.arquetipo }}</div>
-    </div>
+  <!-- Dados Básicos -->
+  <div class="card">
+    <h2>Dados Básicos</h2>
+    {% for label, value in {
+      'Nome': ficha.nome,
+      'Idade': ficha.idade,
+      'Arquetipo': ficha.arquetipo
+    }.items() %}
+      {% if value %}
+        <p class="line"><span class="label">{{ label }}:</span> {{ value }}</p>
+      {% endif %}
+    {% endfor %}
+  </div>
 
-    <!-- Atributos -->
-    <div class="card">
-        <h2>Atributos</h2>
+  <!-- Atributos -->
+  <div class="card">
+    <h2>Atributos</h2>
+    <div class="attr-grid">
 
+      {% set atributos = [
+        ('Poder (P)', ficha.poder, ficha.poder),
+        ('Habilidade (H)', ficha.habilidade, ficha.habilidade * 5),
+        ('Resistência (R)', ficha.resistencia, ficha.resistencia * 5)
+      ] %}
+
+      {% for nome, valor, calculo in atributos %}
         <div class="attr-box">
-            <div class="attr">
-                <div>Poder (P)</div>
-                <b>{{ ficha.poder }}</b>
-                <div class="small">PA = {{ ficha.poder }}</div>
-            </div>
-
-            <div class="attr">
-                <div>Habilidade (H)</div>
-                <b>{{ ficha.habilidade }}</b>
-                <div class="small">Mana = {{ ficha.habilidade * 5 }}</div>
-            </div>
-
-            <div class="attr">
-                <div>Resistência (R)</div>
-                <b>{{ ficha.resistencia }}</b>
-                <div class="small">Vida = {{ ficha.resistencia * 5 }}</div>
-            </div>
+          <span class="small">{{ nome }}</span>
+          <b>{{ valor }}</b>
+          <span class="small">
+            {% if nome.startswith('Poder') %}PA = {{ calculo }}{% endif %}
+            {% if nome.startswith('Habilidade') %}Mana = {{ calculo }}{% endif %}
+            {% if nome.startswith('Resistência') %}Vida = {{ calculo }}{% endif %}
+          </span>
         </div>
-    </div>
+      {% endfor %}
 
-    <!-- Perícias -->
-    <div class="card">
-        <h2>Perícias</h2>
-        {% if ficha.pericias %}
-        <pre>{{ ficha.pericias }}</pre>
-        {% else %}
-        Nenhuma perícia selecionada.
-        {% endif %}
     </div>
+  </div>
 
-    <!-- Vantagens -->
-    <div class="card">
-        <h2>Vantagens</h2>
-        {% if ficha.vantagens %}
-        <pre>{{ ficha.vantagens }}</pre>
-        {% else %}
-        Nenhuma vantagem selecionada.
-        {% endif %}
-    </div>
+  <!-- Campos de texto -->
+  {% for titulo, campo in {
+    'Perícias': ficha.pericias,
+    'Vantagens': ficha.vantagens,
+    'Desvantagens': ficha.desvantagens,
+    'Histórico': ficha.historico
+  }.items() %}
+    {% if campo %}
+      <div class="card">
+        <h2>{{ titulo }}</h2>
+        <p>{{ campo | nl2br }}</p>
+      </div>
+    {% endif %}
+  {% endfor %}
 
-    <!-- Desvantagens -->
-    <div class="card">
-        <h2>Desvantagens</h2>
-        {% if ficha.desvantagens %}
-        <pre>{{ ficha.desvantagens }}</pre>
-        {% else %}
-        Nenhuma desvantagem selecionada.
-        {% endif %}
-    </div>
-
-    <!-- Histórico -->
-    <div class="card">
-        <h2>Histórico / Notas</h2>
-        {% if ficha.historico %}
-        <pre>{{ ficha.historico }}</pre>
-        {% else %}
-        Nenhum histórico informado.
-        {% endif %}
-    </div>
-
-    <a href="/fichas" class="back">⬅ Voltar</a>
+  <a href="/fichas" class="back">⬅ Voltar</a>
 
 </main>
-
 </body>
 </html>
