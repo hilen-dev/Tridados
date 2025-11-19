@@ -2,21 +2,27 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import json
 import uuid
+import logging
 from markupsafe import Markup
 
 app = Flask(__name__)
 app.secret_key = "Suamãeaquelagostosa"
 
+# logging básico
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Criar pastas
 os.makedirs("data/fichas", exist_ok=True)
 
-# Filtro para quebra de linha
+# Filtro para quebra de linha (usado nos templates)
 @app.template_filter('nl2br')
 def nl2br(text):
-    return Markup(text.replace("\n", "<br>"))
+    if text is None:
+        return ""
+    return Markup(str(text).replace("\n", "<br>"))
 
-# =============================== ARQUETIPOS ===============================
-
+# ---------------- ARQUETIPOS (mantido como você já tinha) ----------------
 arquetipos = {
     "Humano": {
         "custo": 0,
@@ -268,42 +274,49 @@ arquetipos = {
         "desvantagens": ["Fraqueza (Luz do dia)"]
     },
 }
-
-# =============================== HOME ===============================
+# =============================== ROTAS ===============================
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# =============================== ETAPA 1 – ATRIBUTOS ===============================
-
+# ETAPA 1 – ATRIBUTOS
 @app.route("/criar_ficha/atributos", methods=["GET", "POST"])
 def criar_ficha_atributos():
     if request.method == "POST":
+        # converter valores para int de forma segura
+        def to_int_safe(val, default=0):
+            try:
+                return int(val)
+            except Exception:
+                return default
+
+        poder = to_int_safe(request.form.get("poder", 0))
+        habilidade = to_int_safe(request.form.get("habilidade", 0))
+        resistencia = to_int_safe(request.form.get("resistencia", 0))
+
         session["ficha"] = {
-            "poder": request.form["poder"],
-            "habilidade": request.form["habilidade"],
-            "resistencia": request.form["resistencia"]
+            "poder": poder,
+            "habilidade": habilidade,
+            "resistencia": resistencia
         }
         return redirect(url_for("criar_ficha_arquetipos"))
 
     return render_template("criar_ficha_atributos.html")
 
-# =============================== ETAPA 2 – ARQUETIPOS ===============================
-
+# ETAPA 2 – ARQUETIPOS
 @app.route("/criar_ficha/arquetipos", methods=["GET", "POST"])
 def criar_ficha_arquetipos():
     if "ficha" not in session:
         return redirect(url_for("criar_ficha_atributos"))
 
     if request.method == "POST":
-        session["ficha"]["arquetipo"] = request.form["arquetipo"]
+        session["ficha"]["arquetipo"] = request.form.get("arquetipo", "")
         return redirect(url_for("criar_ficha_final"))
 
     return render_template("criar_ficha_arquetipos.html", arquetipos=arquetipos)
 
-# =============================== ETAPA 3 – TOQUES FINAIS ===============================
-
+# ETAPA 3 – TOQUES FINAIS
 @app.route("/criar_ficha/final", methods=["GET", "POST"])
 def criar_ficha_final():
     if "ficha" not in session:
@@ -312,48 +325,106 @@ def criar_ficha_final():
     if request.method == "POST":
         ficha_id = str(uuid.uuid4())
 
-        ficha = session["ficha"]
-        ficha["id"] = ficha_id
-        ficha["nome"] = request.form["nome"]
-        ficha["idade"] = request.form["idade"]
-        ficha["pericias"] = request.form["pericias"]
-        ficha["vantagens"] = request.form["vantagens"]
-        ficha["historico"] = request.form["historico"]
+        ficha = session.get("ficha", {}).copy()
 
-        with open(f"data/fichas/{ficha_id}.json", "w", encoding="utf-8") as f:
-            json.dump(ficha, f, indent=4, ensure_ascii=False)
+        # campos vindos do formulário (seguro: get com fallback)
+        nome = request.form.get("nome", "").strip()
+        idade = request.form.get("idade", "").strip()
+        pericias = request.form.get("pericias", "").strip()
+        vantagens = request.form.get("vantagens", "").strip()
+        desvantagens = request.form.get("desvantagens", "").strip()
+        historico = request.form.get("historico", "").strip()
+
+        # reforçar tipos numéricos (garantia)
+        try:
+            ficha["poder"] = int(ficha.get("poder", 0))
+        except Exception:
+            ficha["poder"] = 0
+        try:
+            ficha["habilidade"] = int(ficha.get("habilidade", 0))
+        except Exception:
+            ficha["habilidade"] = 0
+        try:
+            ficha["resistencia"] = int(ficha.get("resistencia", 0))
+        except Exception:
+            ficha["resistencia"] = 0
+
+        # campos finais
+        ficha["id"] = ficha_id
+        ficha["nome"] = nome
+        ficha["idade"] = idade
+        ficha["pericias"] = pericias
+        ficha["vantagens"] = vantagens
+        ficha["desvantagens"] = desvantagens
+        ficha["historico"] = historico
+
+        # calcular derivadas no servidor (evita erros no template)
+        ficha["pa"] = ficha["poder"]
+        ficha["mana"] = ficha["habilidade"] * 5
+        ficha["vida"] = ficha["resistencia"] * 5
+
+        caminho = f"data/fichas/{ficha_id}.json"
+        try:
+            with open(caminho, "w", encoding="utf-8") as f:
+                json.dump(ficha, f, indent=4, ensure_ascii=False)
+        except Exception as e:
+            logger.exception("Erro ao salvar ficha JSON")
+            return "Erro ao salvar ficha", 500
 
         session.pop("ficha", None)
         return redirect(url_for("fichas"))
 
-    return render_template("criar_ficha_final.html", ficha=session["ficha"])
+    # GET
+    return render_template("criar_ficha_final.html", ficha=session.get("ficha", {}))
 
-# =============================== LISTAR FICHAS ===============================
-
+# LISTAR FICHAS
 @app.route("/fichas")
 def fichas():
     lista = []
     for arquivo in os.listdir("data/fichas"):
         if arquivo.endswith(".json"):
-            with open(f"data/fichas/{arquivo}", "r", encoding="utf-8") as f:
-                lista.append(json.load(f))
+            try:
+                with open(f"data/fichas/{arquivo}", "r", encoding="utf-8") as f:
+                    lista.append(json.load(f))
+            except Exception:
+                logger.exception("Falha ao ler ficha %s", arquivo)
     return render_template("fichas.html", fichas=lista)
 
-# =============================== VER FICHA ===============================
-
+# VER FICHA
 @app.route("/ficha/<id>")
 def ficha(id):
     caminho = f"data/fichas/{id}.json"
     if not os.path.exists(caminho):
         return "Ficha não encontrada", 404
 
-    with open(caminho, "r", encoding="utf-8") as f:
-        dados = json.load(f)
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+    except Exception:
+        logger.exception("Erro ao carregar ficha %s", id)
+        return "Erro ao carregar ficha", 500
+
+    # garantir chaves derivadas (caso ficha antiga não tenha)
+    try:
+        dados["poder"] = int(dados.get("poder", 0))
+    except Exception:
+        dados["poder"] = 0
+    try:
+        dados["habilidade"] = int(dados.get("habilidade", 0))
+    except Exception:
+        dados["habilidade"] = 0
+    try:
+        dados["resistencia"] = int(dados.get("resistencia", 0))
+    except Exception:
+        dados["resistencia"] = 0
+
+    dados["pa"] = dados.get("pa", dados["poder"])
+    dados["mana"] = dados.get("mana", dados["habilidade"] * 5)
+    dados["vida"] = dados.get("vida", dados["resistencia"] * 5)
 
     return render_template("ver_ficha.html", ficha=dados)
 
-# =============================== OUTRAS PÁGINAS ===============================
-
+# OUTRAS PÁGINAS
 @app.route("/npc")
 def npc():
     return render_template("npc.html")
@@ -366,6 +437,12 @@ def campanha():
 def homebrew_editor():
     return render_template("homebrew_editor.html")
 
-# =============================== RUN ===============================
+# Handler 500 simples (útil para logs)
+@app.errorhandler(500)
+def internal_error(e):
+    logger.exception("Internal server error: %s", e)
+    return render_template("500.html", error=str(e)), 500
+
+# RUN
 if __name__ == "__main__":
     app.run(debug=True)
