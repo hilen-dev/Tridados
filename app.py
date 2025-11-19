@@ -3,6 +3,10 @@ import os
 import json
 import uuid
 from markupsafe import Markup
+def nl2br(value):
+    return Markup(value.replace("\n", "<br>"))
+
+app.jinja_env.filters["nl2br"] = nl2br
 
 app = Flask(__name__)
 app.secret_key = "Suamãeaquelagostosa"
