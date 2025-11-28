@@ -279,32 +279,29 @@ arquetipos = {
 @app.route("/")
 def index():
     return render_template("index.html")
-
 # ETAPA 1 – ATRIBUTOS
 @app.route("/criar_ficha/atributos", methods=["GET", "POST"])
 def criar_ficha_atributos():
     if request.method == "POST":
-        # converter valores para int de forma segura
-        def to_int_safe(val, default=0):
+
+        # conversão segura
+        def to_int_safe(v):
             try:
-                return int(val)
-            except Exception:
-                return default
+                return int(v)
+            except:
+                return 0
 
         poder = to_int_safe(request.form.get("poder", 0))
         habilidade = to_int_safe(request.form.get("habilidade", 0))
         resistencia = to_int_safe(request.form.get("resistencia", 0))
 
-        poder = int(request.form["poder"])
-        habilidade = int(request.form["habilidade"])
-        resistencia = int(request.form["resistencia"])
-
-    session["ficha"] = {
-        "poder": poder,
-        "habilidade": habilidade,
-        "resistencia": resistencia,
-        "pontos_gastos": poder + habilidade + resistencia
-    }
+        # salva na sessão
+        session["ficha"] = {
+            "poder": poder,
+            "habilidade": habilidade,
+            "resistencia": resistencia,
+            "pontos_gastos": poder + habilidade + resistencia
+        }
 
         return redirect(url_for("criar_ficha_arquetipos"))
 
