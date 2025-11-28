@@ -299,6 +299,7 @@ def criar_ficha_atributos():
             "poder": poder,
             "habilidade": habilidade,
             "resistencia": resistencia
+            "pontos_gastos": poder + habilidade + resistencia
         }
         return redirect(url_for("criar_ficha_arquetipos"))
 
