@@ -325,8 +325,25 @@ def criar_ficha_final():
     if request.method == "POST":
         ficha_id = str(uuid.uuid4())
 
-        ficha = session.get("ficha", {}).copy()
+        ficha = session["ficha"]
+        ficha["id"] = ficha_id
+        ficha["nome"] = request.form.get("nome","")
+        ficha["idade"] = request.form.get("idade","")
+        ficha["pericias"] = request.form.get("pericias","")
+        ficha["vantagens"] = request.form.get("vantagens","")
+        ficha["desvantagens"] = request.form.get("desvantagens","")
+        ficha["historico"] = request.form.get("historico","")
 
+        # garante pasta
+        os.makedirs("data/fichas", exist_ok=True)
+        with open(f"data/fichas/{ficha_id}.json", "w", encoding="utf-8") as f:
+            json.dump(ficha, f, indent=4, ensure_ascii=False)
+
+        session.pop("ficha", None)
+        return redirect(url_for("fichas"))
+
+    return render_template("criar_ficha_final.html", ficha=session["ficha"], edit_mode=False)
+    
         # campos vindos do formulário (seguro: get com fallback)
         nome = request.form.get("nome", "").strip()
         idade = request.form.get("idade", "").strip()
@@ -377,6 +394,33 @@ def criar_ficha_final():
     # GET
     return render_template("criar_ficha_final.html", ficha=session.get("ficha", {}))
 
+# =============================== ROTA DE EDIÇÃO ===============================
+@app.route("/editar_ficha/<id>", methods=["GET", "POST"])
+def editar_ficha(id):
+    caminho = f"data/fichas/{id}.json"
+    if not os.path.exists(caminho):
+        return "Ficha não encontrada", 404
+
+    with open(caminho, "r", encoding="utf-8") as f:
+        ficha = json.load(f)
+
+    if request.method == "POST":
+        # atualizar campos que podem ter sido editados
+        ficha["nome"] = request.form.get("nome","")
+        ficha["idade"] = request.form.get("idade","")
+        ficha["pericias"] = request.form.get("pericias","")
+        ficha["vantagens"] = request.form.get("vantagens","")
+        ficha["desvantagens"] = request.form.get("desvantagens","")
+        ficha["historico"] = request.form.get("historico","")
+
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(ficha, f, indent=4, ensure_ascii=False)
+
+        return redirect(url_for("ficha", id=id))
+
+    # reusar template de criação em modo edição
+    return render_template("criar_ficha_final.html", ficha=ficha, edit_mode=True)
+
 # LISTAR FICHAS
 @app.route("/fichas")
 def fichas():
@@ -397,12 +441,20 @@ def ficha(id):
     if not os.path.exists(caminho):
         return "Ficha não encontrada", 404
 
-    try:
-        with open(caminho, "r", encoding="utf-8") as f:
-            dados = json.load(f)
-    except Exception:
-        logger.exception("Erro ao carregar ficha %s", id)
-        return "Erro ao carregar ficha", 500
+    with open(caminho, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+
+    return render_template("ver_ficha.html", ficha=dados)
+
+# =============================== ERROS ===============================
+@app.errorhandler(500)
+def internal_error(e):
+    # mostra 500 simples para evitar TemplateNotFound quando algo dá errado
+    return render_template("500.html", error=str(e)), 500
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html", error=str(e)), 404
 
     # garantir chaves derivadas (caso ficha antiga não tenha)
     try:
