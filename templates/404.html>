@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Página não encontrada</title></head>
+<body style="font-family:Arial,Helvetica,sans-serif;background:#111;color:#fff;padding:40px;">
+  <h1 style="color:#d4af37">404 — Não encontrado</h1>
+  <p>{{ error }}</p>
+  <a href="/" style="color:#d4af37">Voltar</a>
+</body></html>
