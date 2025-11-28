@@ -295,12 +295,17 @@ def criar_ficha_atributos():
         habilidade = to_int_safe(request.form.get("habilidade", 0))
         resistencia = to_int_safe(request.form.get("resistencia", 0))
 
-        session["ficha"] = {
-            "poder": poder,
-            "habilidade": habilidade,
-            "resistencia": resistencia
-            "pontos_gastos": poder + habilidade + resistencia
-        }
+        poder = int(request.form["poder"])
+        habilidade = int(request.form["habilidade"])
+        resistencia = int(request.form["resistencia"])
+
+    session["ficha"] = {
+        "poder": poder,
+        "habilidade": habilidade,
+        "resistencia": resistencia,
+        "pontos_gastos": poder + habilidade + resistencia
+    }
+
         return redirect(url_for("criar_ficha_arquetipos"))
 
     return render_template("criar_ficha_atributos.html")
