@@ -78,6 +78,7 @@
     transition:0.3s;
   }
   .back:hover{ background:var(--accent); color:#141820; }
+  .actions{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
 </style>
 </head>
 
@@ -141,7 +142,10 @@
     {% endif %}
   {% endfor %}
 
-  <a href="/fichas" class="back">⬅ Voltar</a>
+  <div class="actions">
+    <a href="/fichas" class="back">⬅ Voltar</a>
+    <a href="{{ url_for('editar_ficha', id=ficha.id) }}" class="back">✎ Editar ficha</a>
+  </div>
 
 </main>
 </body>
