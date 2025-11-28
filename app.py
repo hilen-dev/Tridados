@@ -322,74 +322,42 @@ def criar_ficha_final():
     if "ficha" not in session:
         return redirect(url_for("criar_ficha_atributos"))
 
+    ficha = session["ficha"]
+
     if request.method == "POST":
         ficha_id = str(uuid.uuid4())
 
-        ficha = session["ficha"]
+        # Campos
         ficha["id"] = ficha_id
-        ficha["nome"] = request.form.get("nome","")
-        ficha["idade"] = request.form.get("idade","")
-        ficha["pericias"] = request.form.get("pericias","")
-        ficha["vantagens"] = request.form.get("vantagens","")
-        ficha["desvantagens"] = request.form.get("desvantagens","")
-        ficha["historico"] = request.form.get("historico","")
+        ficha["nome"] = request.form.get("nome", "").strip()
+        ficha["idade"] = request.form.get("idade", "").strip()
+        ficha["pericias"] = request.form.get("pericias", "").strip()
+        ficha["vantagens"] = request.form.get("vantagens", "").strip()
+        ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
+        ficha["historico"] = request.form.get("historico", "").strip()
 
-        # garante pasta
+        # Garante tipos numéricos
+        ficha["poder"] = int(ficha.get("poder", 0))
+        ficha["habilidade"] = int(ficha.get("habilidade", 0))
+        ficha["resistencia"] = int(ficha.get("resistencia", 0))
+
+        # Derivados
+        ficha["pa"] = ficha["poder"]
+        ficha["mana"] = ficha["habilidade"] * 5
+        ficha["vida"] = ficha["resistencia"] * 5
+
+        # Salvamento
         os.makedirs("data/fichas", exist_ok=True)
-        with open(f"data/fichas/{ficha_id}.json", "w", encoding="utf-8") as f:
+        caminho = f"data/fichas/{ficha_id}.json"
+
+        with open(caminho, "w", encoding="utf-8") as f:
             json.dump(ficha, f, indent=4, ensure_ascii=False)
 
         session.pop("ficha", None)
         return redirect(url_for("fichas"))
 
-    return render_template("criar_ficha_final.html", ficha=session["ficha"], edit_mode=False)
-    
-        # campos vindos do formulário (seguro: get com fallback)
-        nome = request.form.get("nome", "").strip()
-        idade = request.form.get("idade", "").strip()
-        pericias = request.form.get("pericias", "").strip()
-        vantagens = request.form.get("vantagens", "").strip()
-        desvantagens = request.form.get("desvantagens", "").strip()
-        historico = request.form.get("historico", "").strip()
-
-        # reforçar tipos numéricos (garantia)
-        try:
-            ficha["poder"] = int(ficha.get("poder", 0))
-        except Exception:
-            ficha["poder"] = 0
-        try:
-            ficha["habilidade"] = int(ficha.get("habilidade", 0))
-        except Exception:
-            ficha["habilidade"] = 0
-        try:
-            ficha["resistencia"] = int(ficha.get("resistencia", 0))
-        except Exception:
-            ficha["resistencia"] = 0
-
-        # campos finais
-        ficha["id"] = ficha_id
-        ficha["nome"] = nome
-        ficha["idade"] = idade
-        ficha["pericias"] = pericias
-        ficha["vantagens"] = vantagens
-        ficha["desvantagens"] = desvantagens
-        ficha["historico"] = historico
-
-        # calcular derivadas no servidor (evita erros no template)
-        ficha["pa"] = ficha["poder"]
-        ficha["mana"] = ficha["habilidade"] * 5
-        ficha["vida"] = ficha["resistencia"] * 5
-
-        caminho = f"data/fichas/{ficha_id}.json"
-        try:
-            with open(caminho, "w", encoding="utf-8") as f:
-                json.dump(ficha, f, indent=4, ensure_ascii=False)
-        except Exception as e:
-            logger.exception("Erro ao salvar ficha JSON")
-            return "Erro ao salvar ficha", 500
-
-        session.pop("ficha", None)
-        return redirect(url_for("fichas"))
+    # GET
+    return render_template("criar_ficha_final.html", ficha=ficha)
 
     # GET
     return render_template("criar_ficha_final.html", ficha=session.get("ficha", {}))
