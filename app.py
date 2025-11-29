@@ -279,33 +279,59 @@ arquetipos = {
 @app.route("/")
 def index():
     return render_template("index.html")
-# ETAPA 1 – ATRIBUTOS
-@app.route("/criar_ficha/atributos", methods=["GET", "POST"])
-def criar_ficha_atributos():
+@app.route("/criar_ficha/final", methods=["GET", "POST"])
+def criar_ficha_final():
+    if "ficha" not in session:
+        session["ficha"] = {} 
+        
+    ficha = session["ficha"]
+
     if request.method == "POST":
 
-        # conversão segura
-        def to_int_safe(v):
+        # --- ATRIBUTOS ---
+        def safe_int(v):
             try:
                 return int(v)
             except:
                 return 0
 
-        poder = to_int_safe(request.form.get("poder", 0))
-        habilidade = to_int_safe(request.form.get("habilidade", 0))
-        resistencia = to_int_safe(request.form.get("resistencia", 0))
+        ficha["poder"] = safe_int(request.form.get("poder", 0))
+        ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
+        ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
 
-        # salva na sessão
-        session["ficha"] = {
-            "poder": poder,
-            "habilidade": habilidade,
-            "resistencia": resistencia,
-            "pontos_gastos": poder + habilidade + resistencia
-        }
+        # Sistema de pontos (atributos)
+        ficha["pontos_gastos"] = (
+            ficha["poder"] +
+            ficha["habilidade"] +
+            ficha["resistencia"]
+        )
 
-        return redirect(url_for("criar_ficha_arquetipos"))
+        # --- TOQUES FINAIS ---
+        ficha["nome"] = request.form.get("nome", "").strip()
+        ficha["idade"] = request.form.get("idade", "").strip()
+        ficha["pericias"] = request.form.get("pericias", "").strip()
+        ficha["vantagens"] = request.form.get("vantagens", "").strip()
+        ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
+        ficha["historico"] = request.form.get("historico", "").strip()
 
-    return render_template("criar_ficha_atributos.html")
+        # --- ATRIBUTOS DERIVADOS ---
+        ficha["pa"] = ficha["poder"]
+        ficha["mana"] = ficha["habilidade"] * 5
+        ficha["vida"] = ficha["resistencia"] * 5
+
+        # --- SALVAR FICHA ---
+        ficha_id = str(uuid.uuid4())
+        ficha["id"] = ficha_id
+
+        os.makedirs("data/fichas", exist_ok=True)
+        with open(f"data/fichas/{ficha_id}.json", "w", encoding="utf-8") as f:
+            json.dump(ficha, f, indent=4, ensure_ascii=False)
+
+        session.pop("ficha", None)
+        return redirect(url_for("fichas"))
+
+    # GET → renderização
+    return render_template("criar_ficha_final.html", ficha=ficha, arquetipos=arquetipos)
 
 # ETAPA 2 – ARQUETIPOS
 @app.route("/criar_ficha/arquetipos", methods=["GET", "POST"])
@@ -318,52 +344,6 @@ def criar_ficha_arquetipos():
         return redirect(url_for("criar_ficha_final"))
 
     return render_template("criar_ficha_arquetipos.html", arquetipos=arquetipos)
-
-# ETAPA 3 – TOQUES FINAIS
-@app.route("/criar_ficha/final", methods=["GET", "POST"])
-def criar_ficha_final():
-    if "ficha" not in session:
-        return redirect(url_for("criar_ficha_atributos"))
-
-    ficha = session["ficha"]
-
-    if request.method == "POST":
-        ficha_id = str(uuid.uuid4())
-
-        # Campos
-        ficha["id"] = ficha_id
-        ficha["nome"] = request.form.get("nome", "").strip()
-        ficha["idade"] = request.form.get("idade", "").strip()
-        ficha["pericias"] = request.form.get("pericias", "").strip()
-        ficha["vantagens"] = request.form.get("vantagens", "").strip()
-        ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
-        ficha["historico"] = request.form.get("historico", "").strip()
-
-        # Garante tipos numéricos
-        ficha["poder"] = int(ficha.get("poder", 0))
-        ficha["habilidade"] = int(ficha.get("habilidade", 0))
-        ficha["resistencia"] = int(ficha.get("resistencia", 0))
-
-        # Derivados
-        ficha["pa"] = ficha["poder"]
-        ficha["mana"] = ficha["habilidade"] * 5
-        ficha["vida"] = ficha["resistencia"] * 5
-
-        # Salvamento
-        os.makedirs("data/fichas", exist_ok=True)
-        caminho = f"data/fichas/{ficha_id}.json"
-
-        with open(caminho, "w", encoding="utf-8") as f:
-            json.dump(ficha, f, indent=4, ensure_ascii=False)
-
-        session.pop("ficha", None)
-        return redirect(url_for("fichas"))
-
-    # GET
-    return render_template("criar_ficha_final.html", ficha=ficha)
-
-    # GET
-    return render_template("criar_ficha_final.html", ficha=session.get("ficha", {}))
 
 # =============================== ROTA DE EDIÇÃO ===============================
 @app.route("/editar_ficha/<id>", methods=["GET", "POST"])
