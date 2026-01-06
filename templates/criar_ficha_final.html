@@ -41,10 +41,20 @@
           <label style="margin-top:10px">Idade</label>
           <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
           <div style="margin-top:12px; display:flex; gap:10px;">
-            <div style="flex:1" class="pill"><small class="meta">Poder (P)</small><div style="font-weight:800; font-size:18px">{{ ficha.poder if ficha and ficha.poder is defined else 0 }}</div></div>
-            <div style="flex:1" class="pill"><small class="meta">Habilidade (H)</small><div style="font-weight:800; font-size:18px">{{ ficha.habilidade if ficha and ficha.habilidade is defined else 0 }}</div></div>
-            <div style="flex:1" class="pill"><small class="meta">Resistência (R)</small><div style="font-weight:800; font-size:18px">{{ ficha.resistencia if ficha and ficha.resistencia is defined else 0 }}</div></div>
-          </div>
+            <div style="flex:1">
+  <label>Poder (P)</label>
+  <input type="number" name="poder" min="0" max="10"
+         value="{{ ficha.poder if ficha and ficha.poder is defined else 0 }}">
+</div>
+
+  <label>Habilidade (H)</label>
+  <input type="number" name="habilidade" min="0" max="10"
+          value="{{ ficha.habilidade if ficha and ficha.habilidade is defined else 0 }}">
+ </div>
+
+  <label> Resistencia (R)</label>
+  <input type="number" name="resistência" min="o" max="10"
+          value="{{ ficha.resistência if ficha and ficha.resistência is defined else 0 }}">
         </div>
 
         <div class="card">
