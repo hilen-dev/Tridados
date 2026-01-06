@@ -279,7 +279,7 @@ arquetipos = {
 # ---------------------------------------------------------------------
 @app.route("/")
 def index():
-    return render_tmplates("index.html")
+    return render_templates("index.html")
 
 # ---------------------------------------------------------------------
 # ROTA 1 — ESCOLHER ARQUÉTIPO
