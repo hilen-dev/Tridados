@@ -94,3 +94,27 @@ footer {
   text-align: center;
   font-size: 18px;
 }
+
+/* Scrollbar dark (Chrome, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f1318;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2f3a;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4a;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2f3a #0f1318;
+}
