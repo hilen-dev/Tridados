@@ -85,16 +85,15 @@ footer {
 .attr-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 12px;
+  gap: 14px;
+  margin-top: 10px;
 }
 
 .attr-grid input {
-  width: 100%;
   text-align: center;
   font-size: 18px;
+  font-weight: bold;
 }
-
 /* Scrollbar dark (Chrome, Edge, Opera) */
 ::-webkit-scrollbar {
   width: 8px;
