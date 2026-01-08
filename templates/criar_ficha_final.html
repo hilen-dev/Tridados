@@ -41,26 +41,23 @@
           <label style="margin-top:10px">Idade</label>
           <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
           <div style="margin-top:12px; display:flex; gap:10px;">
-      <div class="sttr-grid">
-        <div>
-          <label>Poder (P)</label>
-        <input type="number" nome="Poder" min="0" max="10" value="0">
-        
-        </div>
-
-        <div> 
-     <label>Habilidade (H)</label>
-<input type="number" nome="Habilidade" min="0" max="10" value="0">
-        
+      <div class="card">
+  <h3 style="color:var(--accent)">Atributos</h3>
+  <div class="attr-grid">
+    <div>
+      <label>Poder (P)</label>
+      <input type="number" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
+    </div>
+    <div>
+      <label>Habilidade (H)</label>
+      <input type="number" name="habilidade" min="0" max="10" value="{{ ficha.habilidade or 0 }}">
+    </div>
+    <div>
+      <label>Resistência (R)</label>
+      <input type="number" name="resistencia" min="0" max="10" value="{{ ficha.resistencia or 0 }}">
+    </div>
   </div>
-
-          <div>
-            <label>Resistência (R)</label>
-  <input type="number" nome="Resistência" min="0" max="10" value="0">
-
-          </div>
-      </div>
-            
+      </div>                  
             
         <div class="card">
           <h3 style="margin:0 0 8px 0; color:var(--accent)">Perícias (1 pt)</h3>
