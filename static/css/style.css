@@ -81,3 +81,16 @@ footer {
   border-top: 1px solid #2c3340;
   font-size: 0.9rem;
 }
+
+.attr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.attr-grid input {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+}
