@@ -41,10 +41,11 @@
           <label style="margin-top:10px">Idade</label>
           <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
           <div style="margin-top:12px; display:flex; gap:10px;">
+            <div>
       <div class="card">
   <h3 style="color:var(--accent)">Atributos</h3>
   <div class="attr-grid">
-    <div>
+      <div>
       <label>Poder (P)</label>
       <input type="number" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
     </div>
