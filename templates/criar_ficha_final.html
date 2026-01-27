@@ -1,4 +1,3 @@
-<!-- templates/criar_ficha_final.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -106,7 +105,6 @@
       </aside>
     </div>
 
-    <!-- hidden inputs -->
     <input type="hidden" name="pericias" id="periciasHidden" value="{{ ficha.pericias if ficha and ficha.pericias is defined else '' }}">
     <input type="hidden" name="vantagens" id="vantagensHidden" value="{{ ficha.vantagens if ficha and ficha.vantagens is defined else '' }}">
     <input type="hidden" name="desvantagens" id="desvantagensHidden" value="{{ ficha.desvantagens if ficha and ficha.desvantagens is defined else '' }}">
@@ -114,7 +112,6 @@
 </div>
 
 <script>
-/* == listas base (resumida) == */
 const pericias = ["Animais","Arte","Esportes","Influência","Luta","Manha","Máquinas","Medicina","Mística","Percepção","Saber","Sobrevivência"];
 const vantagens = [
   {k:"Aceleração", l:"Aceleração (1pt)", c:1},
@@ -243,7 +240,6 @@ const desvantagens = [
   {k:"Tapado", l:"Tapado (–1pt)", g:1}
 ];
 
-/* == renderiza botões (pills) == */
 function buildPills(list, containerId, prefix, onClickExtra){
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = "";
@@ -260,7 +256,6 @@ function buildPills(list, containerId, prefix, onClickExtra){
       computePoints();
       if(onClickExtra) onClickExtra();
     });
-    // se já vem pré-selecionado no ficheiro, marca
     const preVal = (document.getElementById(prefix+'Hidden')?.value || "");
     if(preVal && preVal.includes(key)) pill.classList.add('active');
     wrap.appendChild(pill);
@@ -271,7 +266,6 @@ buildPills(pericias, 'periciasWrap', 'pericias');
 buildPills(vantagens, 'vantagensWrap', 'vantagens');
 buildPills(desvantagens, 'desvWrap', 'desvantagens');
 
-/* == cálculo de pontos == */
 function computePoints(){
   const initial = parseInt(document.getElementById('initialPoints').value) || 0;
   const P = parseInt(document.getElementById('attrP')?.value) || 0;
@@ -279,10 +273,10 @@ function computePoints(){
   const R = parseInt(document.getElementById('attrR')?.value) || 0;
 
   const atributosCost = P + H + R;
-  // pericias
+
   const perCost = document.querySelectorAll('#periciasWrap .pill.active').length * 1;
   document.getElementById('periciasCost').textContent = perCost;
-  // vantagens
+  
   let vantCost = 0;
   document.querySelectorAll('#vantagensWrap .pill.active').forEach(p=>{
     const key = p.dataset.key;
@@ -290,7 +284,7 @@ function computePoints(){
     vantCost += found.c || 1;
   });
   document.getElementById('vantCost').textContent = vantCost;
-  // desvantagens (ganho)
+  
   let desvGain = 0;
   document.querySelectorAll('#desvWrap .pill.active').forEach(p=>{
     const key = p.dataset.key;
@@ -303,11 +297,9 @@ function computePoints(){
   document.getElementById('pointsLeft').textContent = left;
 }
 
-/* recalcula quando muda initial */
 document.getElementById('initialPoints').addEventListener('input', computePoints);
 computePoints();
 
-/* prepara submissão: preenche hidden inputs com seleções e submete */
 function prepareSubmit(){
   const selPer = Array.from(document.querySelectorAll('#periciasWrap .pill.active')).map(p=>p.dataset.key);
   document.getElementById('periciasHidden').value = selPer.join(', ');
@@ -324,7 +316,6 @@ function prepareSubmit(){
   }
 }
   
-/* limpar seleções */
 function resetSelections(){
   document.querySelectorAll('.pill').forEach(p=>
     p.classList.remove('active')
