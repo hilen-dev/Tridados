@@ -317,12 +317,18 @@ def criar_ficha_final():
         ficha["poder"] = safe_int(request.form.get("poder", 0))
         ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
         ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
+        
+        arq_nome = fivha.get("arquetipo", "")
+        arq_custo = =arquetipos.get(arq_nome, {}).get("custo", 0)
 
         ficha["pontos_gastos"] = (
             ficha["poder"] +
             ficha["habilidade"] +
-            ficha["resistencia"]
+            ficha["resistencia"] +
+             arq_custo
         )
+
+        ficha["custo_arquetipo"] = arq_custo
 
         # --- CAMPOS FINAIS ---
         ficha["nome"] = request.form.get("nome", "").strip()
@@ -332,6 +338,8 @@ def criar_ficha_final():
         ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
         ficha["historico"] = request.form.get("historico", "").strip()
 
+        if ficha["pontos_gastos"] > 10:
+            return "Desculpa, Quantidade de pontos disponiveis gastos,tente analizar um pouco mais"
         # --- DERIVADOS ---
         ficha["pa"] = ficha["poder"]
         ficha["mana"] = ficha["habilidade"] * 5
