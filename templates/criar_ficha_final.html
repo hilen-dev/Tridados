@@ -47,15 +47,15 @@
   <div class="attr-grid">
       <div>
       <label>Poder (P)</label>
-      <input type="number" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
+      <input type="number" id="attrP" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
     </div>
     <div>
       <label>Habilidade (H)</label>
-      <input type="number" name="habilidade" min="0" max="10" value="{{ ficha.habilidade or 0 }}">
+      <input type="number" id="attrH" name="habilidade" min="0" max="10" value="{{ ficha.habilidade or 0 }}">
     </div>
     <div>
       <label>Resistência (R)</label>
-      <input type="number" name="resistencia" min="0" max="10" value="{{ ficha.resistencia or 0 }}">
+      <input type="number" id="attrR" name="resistencia" min="0" max="10" value="{{ ficha.resistencia or 0 }}">
     </div>
   </div>
       </div>                  
@@ -274,6 +274,11 @@ buildPills(desvantagens, 'desvWrap', 'desvantagens');
 /* == cálculo de pontos == */
 function computePoints(){
   const initial = parseInt(document.getElementById('initialPoints').value) || 0;
+  const P = parseInt(document.getElementById('attrP')?.value) || 0;
+  const H = parseInt(document.getElementById('attrH')?.value) || 0;
+  const R = parseInt(document.getElementById('attrR')?.value) || 0;
+
+  const atributosCost = P + H + R;
   // pericias
   const perCost = document.querySelectorAll('#periciasWrap .pill.active').length * 1;
   document.getElementById('periciasCost').textContent = perCost;
@@ -294,7 +299,7 @@ function computePoints(){
   });
   document.getElementById('desvGain').textContent = desvGain;
 
-  const left = initial - (perCost + vantCost - desvGain);
+  const left = initial - (atributosCost + perCost + vantCost - desvGain);
   document.getElementById('pointsLeft').textContent = left;
 }
 
@@ -318,14 +323,21 @@ function prepareSubmit(){
     document.getElementById('finalForm').submit();
   }
 }
-
+  
 /* limpar seleções */
 function resetSelections(){
-  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p=>
+    p.classList.remove('active')
+  );
   document.getElementById('periciasHidden').value = '';
   document.getElementById('vantagensHidden').value = '';
   document.getElementById('desvantagensHidden').value = '';
-  computePoints();
+  
+  ['attrP','attrH','attrR'].forEach(id => {
+  document.getElementById(id).addEventListener('input', computePoints);
+});
+
+   computePoints();
 }
 </script>
 </body>
