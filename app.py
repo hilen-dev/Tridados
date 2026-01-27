@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session["ficha"]["arquetipo"] = request.form.get("arquetipo")
+from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import json
 import uuid
