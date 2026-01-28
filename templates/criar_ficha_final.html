@@ -41,26 +41,33 @@
           <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
           <div style="margin-top:12px; display:flex; gap:10px;">
             <div>
-      <div class="card">
+ <div class="card">
   <h3 style="color:var(--accent)">Atributos</h3>
+
   <div class="attr-grid">
-      <div>
+    <div>
       <label>Poder (P)</label>
-      <input type="number" id="attrP" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
+      <input type="number" id="attrP" name="poder" min="0" max="10"
+             value="{{ ficha.poder if ficha and ficha.poder is defined else 0 }}">
     </div>
+
     <div>
       <label>Habilidade (H)</label>
-      <input type="number" id="attrH" name="habilidade" min="0" max="10" value="{{ ficha.habilidade or 0 }}">
+      <input type="number" id="attrH" name="habilidade" min="0" max="10"
+             value="{{ ficha.habilidade if ficha and ficha.habilidade is defined else 0 }}">
     </div>
+
     <div>
       <label>Resistência (R)</label>
-      <input type="number" id="attrR" name="resistencia" min="0" max="10" value="{{ ficha.resistencia or 0 }}">
+      <input type="number" id="attrR" name="resistencia" min="0" max="10"
+             value="{{ ficha.resistencia if ficha and ficha.resistencia is defined else 0 }}">
     </div>
   </div>
-      </div>                  
+</div>
+                  
             
         <div class="card">
-          <h3 style="margin:0 0 8px 0; color:var(--accent)">Perícias (1 pt)</h3>
+          <h3 style="margin:0 0 8px 0; color:var(#FFA500)">Perícias (1 pt)</h3>
           <div class="list-scroll" id="periciasWrap"></div>
         </div>
 
@@ -315,20 +322,26 @@ function prepareSubmit(){
     document.getElementById('finalForm').submit();
   }
 }
-  
 function resetSelections(){
-  document.querySelectorAll('.pill').forEach(p=>
+  document.querySelectorAll('.pill').forEach(p =>
     p.classList.remove('active')
   );
+
   document.getElementById('periciasHidden').value = '';
   document.getElementById('vantagensHidden').value = '';
   document.getElementById('desvantagensHidden').value = '';
-  
-  ['attrP','attrH','attrR'].forEach(id => {
-  document.getElementById(id).addEventListener('input', computePoints);
+
+  document.getElementById('attrP').value = 0;
+  document.getElementById('attrH').value = 0;
+  document.getElementById('attrR').value = 0;
+
+  computePoints();
+}
+['attrP','attrH','attrR'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', computePoints);
 });
 
-   computePoints();
 }
 </script>
 </body>
