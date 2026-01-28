@@ -319,7 +319,7 @@ def criar_ficha_final():
         ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
         
         arq_nome = fivha.get("arquetipo", "")
-        arq_custo = =arquetipos.get(arq_nome, {}).get("custo", 0)
+        arq_custo = arquetipos.get(arq_nome, {}).get("custo", 0)
 
         ficha["pontos_gastos"] = (
             ficha["poder"] +
