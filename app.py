@@ -3,22 +3,82 @@ import os
 import json
 import uuid
 import logging
+from pathlib 
 from markupsafe import Markup
 
 app = Flask(__name__)
-app.secret_key = "Suamãeaquelagostosa"
+app.secret_key = os.environ.get("Seupaidecalcinha101", os.uradom(24).hex())
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-os.makedirs("data/fichas", exist_ok=True)
+DATA_DIR = Path("data/ficha")
+DATA_DIR.mkdir(parents=True, existe_ok=True)
+
+def save_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+def ficha_path(ficha_id):
+    try:
+        valid_id = str(uuid.UUID(ficha_id))
+    except (TypeError, ValueError):
+        return None
+        return DATA_DIR / f"{valid_id}.json"
+
+def load_ficha(ficha_id):
+    path = ficha_path(ficha_id)
+    if path is None or not path.exists():
+        return None
+
+    with open(path, "r", encoding = "utf-8") as f:
+        return json.load(f)
+
+def save_ficha(ficha):
+    ficha_id = ficha_get("id")
+    path = ficha_path(ficha_id)
+    if path is None:
+        return False
+
+    with open(path, "w", encoding="utf-8") as "f":
+    json.dump(ficha, f, indent=4, ensure_ascii=False)
+    return True
+
+def apply_form_data(ficha):
+    ficha["poder"] = safe_int(request.form.get("poder", 0))
+    ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
+    ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
+
+    arq_nome = ficha.get("arquetipo", "")
+    arq_custo = arquetipos.get(arq_nome, {}).get("custo", 0)
+
+    ficha["pontos_gastos"] = (
+        ficha["poder"] +
+        ficha["habilidade"] +
+        ficha["resistencia"] +
+        arq_custo
+    )
+    ficha["custo_arquetipo"] = arq_custo
+
+    ficha["nome"] = request.form.get("nome", "").strip()
+    ficha["idade"] = request.form.get("idade", "").strip()
+    ficha["pericias"] = request.form.get("pericias", "").strip()
+    ficha["vantagens"] = request.form.get("vantagens", "").strip()
+    ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
+    ficha["historico"] = request.form.get("historico", "").strip()
+
+    ficha["pa"] = ficha["poder"]
+    ficha["mana"] = ficha["habilidade"] * 5
+    ficha["vida"] = ficha["resistencia"] * 5
 
 @app.template_filter('nl2br')
 def nl2br(text):
     if text is None:
         return ""
     return Markup(str(text).replace("\n", "<br>"))
-
+    
 # ---------------------------------------------------------------------
 # ARQUETIPOS
 # ---------------------------------------------------------------------
@@ -302,51 +362,14 @@ def criar_ficha_final():
 
     if request.method == "POST":
 
-        # --- ATRIBUTOS ---
-        def safe_int(v):
-            try:
-                return int(v)
-            except:
-                return 0
-
-        ficha["poder"] = safe_int(request.form.get("poder", 0))
-        ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
-        ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
-
-        arq_nome = ficha.get("arquetipo", "")  # Corrigido de "fivha" para "ficha"
-        arq_custo = arquetipos.get(arq_nome, {}).get("custo", 0)
-
-        ficha["pontos_gastos"] = (
-            ficha["poder"] +
-            ficha["habilidade"] +
-            ficha["resistencia"] +
-            arq_custo
-        )
-
-        ficha["custo_arquetipo"] = arq_custo
-
-        # --- CAMPOS FINAIS ---
-        ficha["nome"] = request.form.get("nome", "").strip()
-        ficha["idade"] = request.form.get("idade", "").strip()
-        ficha["pericias"] = request.form.get("pericias", "").strip()
-        ficha["vantagens"] = request.form.get("vantagens", "").strip()
-        ficha["desvantagens"] = request.form.get("desvantagens", "").strip()
-        ficha["historico"] = request.form.get("historico", "").strip()
+  apply_form_data(ficha)
 
         if ficha["pontos_gastos"] > 10:
             return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
 
-        # --- DERIVADOS ---
-        ficha["pa"] = ficha["poder"]
-        ficha["mana"] = ficha["habilidade"] * 5
-        ficha["vida"] = ficha["resistencia"] * 5
-
         # --- SALVAR ---
-        ficha_id = str(uuid.uuid4())
-        ficha["id"] = ficha_id
-
-        with open(f"data/fichas/{ficha_id}.json", "w", encoding="utf-8") as f:
-            json.dump(ficha, f, indent=4, ensure_ascii=False)
+       ficha_id=str(uuid.uuid4())
+       save_ficha(ficha)
 
         session.pop("ficha", None)
         return redirect(url_for("fichas"))
@@ -358,27 +381,20 @@ def criar_ficha_final():
 # ---------------------------------------------------------------------
 @app.route("/editar_ficha/<id>", methods=["GET", "POST"])
 def editar_ficha(id):
-    caminho = f"data/fichas/{id}.json"
-    if not os.path.exists(caminho):
+    if ficha is None:
         return "Ficha não encontrada", 404
 
-    with open(caminho, "r", encoding="utf-8") as f:
-        ficha = json.load(f)
+        if request.method == "POST":
+        apply_form_data(ficha)
 
-    if request.method == "POST":
-        ficha["nome"] = request.form.get("nome","")
-        ficha["idade"] = request.form.get("idade","")
-        ficha["pericias"] = request.form.get("pericias","")
-        ficha["vantagens"] = request.form.get("vantagens","")
-        ficha["desvantagens"] = request.form.get("desvantagens","")
-        ficha["historico"] = request.form.get("historico","")
+       if ficha["pontos_gastos"] > 10:
+           return "Desculpa, a quantidade maxima de pontos foi exedida, analize novamente.", 400
 
-        with open(caminho, "w", encoding="utf-8") as f:
-            json.dump(ficha, f, indent=4, ensure_ascii=False)
+save_ficha(ficha)
 
         return redirect(url_for("ficha", id=id))
 
-    return render_template("criar_ficha_final.html", ficha=ficha, edit_mode=True)
+    return render_template("criar_ficha_final.html", ficha=ficha, arquetipos=arquetipos, edit_mode=True)
 
 # ---------------------------------------------------------------------
 # LISTAR FICHAS
@@ -386,9 +402,9 @@ def editar_ficha(id):
 @app.route("/fichas")
 def fichas():
     lista = []
-    for arquivo in os.listdir("data/fichas"):
-        if arquivo.endswith(".json"):
-            with open(f"data/fichas/{arquivo}", "r", encoding="utf-8") as f:
+    for arquivo in DATA_DIR.interdir():
+        if arquivo.sufix == ".json":
+            with open(arquivo", "r", encoding="utf-8") as f:
                 lista.append(json.load(f))
     return render_template("fichas.html", fichas=lista)
 
@@ -397,12 +413,9 @@ def fichas():
 # ---------------------------------------------------------------------
 @app.route("/ficha/<id>")
 def ficha(id):
-    caminho = f"data/fichas/{id}.json"
-    if not os.path.exists(caminho):
+    dados = load_ficha(id):
+        if dados is None:
         return "Ficha não encontrada", 404
-
-    with open(caminho, "r", encoding="utf-8") as f:
-        dados = json.load(f)
 
     return render_template("ver_ficha.html", ficha=dados)
 
