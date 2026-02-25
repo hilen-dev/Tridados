@@ -293,33 +293,6 @@ def criar_ficha_arquetipos():
 
     return render_template("criar_ficha_arquetipos.html", arquetipos=arquetipos)
 
-arquetipos = {
-    "Humano":{"custo":0},
-    "Aberrante":{"custo":1},
-    "Abissal":{"custo":1},
-    "Alien":{"custo":1},
-    "Anão":{"custo":1},
-    "Anfíbio":{"custo":1},
-    "Celescial":{"custo":1},
-    "Centauro":{"custo":2},
-    "Ciborgue":{"custo":2},
-    "Constructo":{"custo":1},
-    "Dahllan":{"custo":1},
-    "Elfo":{"custo":1},
-    "Fada":{"custo":1},
-    "Fantasma":{"custo":2},
-    "Goblin":{"custo":1},
-    "Hynne":{"custo":1},
-    "Kallyanach":{"custo":2},
-    "Kemono":{"custo":1},
-    "Medusa":{"custo":1},
-    "Minotauro":{"custo":1},
-    "Ogro":{"custo":1},
-    "Osteon":{"custo":2},
-    "Qareen":{"custo":2},
-    "Sauroide":{"custo":2},
-    "Vampiro":{"custo":1},
-
 @app.route("/criar_ficha/final", methods=["GET", "POST"])
 def criar_ficha_final():
     if "ficha" not in session:
