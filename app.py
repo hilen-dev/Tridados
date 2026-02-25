@@ -280,10 +280,8 @@ arquetipos = {
 @app.route("/")
 def index():
     return render_template("index.html")
-
-# ---------------------------------------------------------------------
+    
 # ROTA 1 — ESCOLHER ARQUÉTIPO
-# ---------------------------------------------------------------------
 @app.route("/criar_ficha/arquetipos", methods=["GET", "POST"])
 def criar_ficha_arquetipos():
     if "ficha" not in session:
@@ -295,9 +293,33 @@ def criar_ficha_arquetipos():
 
     return render_template("criar_ficha_arquetipos.html", arquetipos=arquetipos)
 
-# ---------------------------------------------------------------------
-# ROTA 2 — ATRIBUTOS + TOQUES FINAIS (TUDO JUNTO)
-# ---------------------------------------------------------------------
+arquetipos = {
+    "Humano":{"custo":0},
+    "Aberrante":{"custo":1},
+    "Abissal":{"custo":1},
+    "Alien":{"custo":1},
+    "Anão":{"custo":1},
+    "Anfíbio":{"custo":1},
+    "Celescial":{"custo":1},
+    "Centauro":{"custo":2},
+    "Ciborgue":{"custo":2},
+    "Constructo":{"custo":1},
+    "Dahllan":{"custo":1},
+    "Elfo":{"custo":1},
+    "Fada":{"custo":1},
+    "Fantasma":{"custo":2},
+    "Goblin":{"custo":1},
+    "Hynne":{"custo":1},
+    "Kallyanach":{"custo":2},
+    "Kemono":{"custo":1},
+    "Medusa":{"custo":1},
+    "Minotauro":{"custo":1},
+    "Ogro":{"custo":1},
+    "Osteon":{"custo":2},
+    "Qareen":{"custo":2},
+    "Sauroide":{"custo":2},
+    "Vampiro":{"custo":1},
+
 @app.route("/criar_ficha/final", methods=["GET", "POST"])
 def criar_ficha_final():
     if "ficha" not in session:
@@ -317,15 +339,15 @@ def criar_ficha_final():
         ficha["poder"] = safe_int(request.form.get("poder", 0))
         ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
         ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
-        
-        arq_nome = fivha.get("arquetipo", "")
+
+        arq_nome = ficha.get("arquetipo", "")  # Corrigido de "fivha" para "ficha"
         arq_custo = arquetipos.get(arq_nome, {}).get("custo", 0)
 
         ficha["pontos_gastos"] = (
             ficha["poder"] +
             ficha["habilidade"] +
             ficha["resistencia"] +
-             arq_custo
+            arq_custo
         )
 
         ficha["custo_arquetipo"] = arq_custo
@@ -339,7 +361,8 @@ def criar_ficha_final():
         ficha["historico"] = request.form.get("historico", "").strip()
 
         if ficha["pontos_gastos"] > 10:
-            return "Desculpa, Quantidade de pontos disponiveis gastos,tente analizar um pouco mais"
+            return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
+
         # --- DERIVADOS ---
         ficha["pa"] = ficha["poder"]
         ficha["mana"] = ficha["habilidade"] * 5
