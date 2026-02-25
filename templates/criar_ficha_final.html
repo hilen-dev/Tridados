@@ -9,19 +9,17 @@
   body{background:var(--bg); color:#f5f5f5; font-family:"Segoe UI",Roboto,Arial; margin:0; padding:22px;}
   .container{max-width:1100px; margin:20px auto;}
   .card{background:var(--card); padding:18px; border-radius:12px; margin-bottom:18px; border-left:6px solid var(--accent);}
-  label{display:block; font-size:14px; color:var(--muted); margin-bottom:6px;}
+  label, .meta{font-size:14px; color:var(--muted);}
   input[type="text"], input[type="number"], textarea{width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:#0f1318; color:#fff;}
   textarea{min-height:110px;}
-  .controls{display:flex; gap:12px; margin-top:12px; align-items:center; flex-wrap:wrap;}
+  .controls{display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;}
   .btn{background:var(--accent); color:#141820; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;}
   .ghost{background:transparent; border:1px solid rgba(212,175,55,0.15); color:var(--accent);}
   .grid{display:grid; grid-template-columns: 1fr 320px; gap:18px;}
-  @media(max-width:980px){ .grid{grid-template-columns:1fr; } }
-  .pill {display:inline-block;padding:6px 10px;border-radius:999px;background:#0f1318;border:1px solid rgba(255,255,255,0.03);cursor:pointer;margin:6px 6px 6px 0;}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#0f1318;border:1px solid rgba(255,255,255,0.03);cursor:pointer;margin:6px;}
   .pill.active{background:var(--accent); color:#141820;}
   .list-scroll{max-height:240px; overflow:auto; padding-right:6px;}
   .points{font-weight:800; font-size:22px; color:var(--accent);}
-  .meta{font-size:13px; color:var(--muted); margin-top:8px;}
 </style>
 </head>
 <body>
@@ -30,91 +28,65 @@
     <h1 style="margin:0; color:var(--accent)">{% if edit_mode %}Editar Ficha{% else %}Toques Finais — Criação de Ficha{% endif %}</h1>
     <div class="meta">Escolha perícias, vantagens e desvantagens. Pontos atualizam em tempo real.</div>
   </div>
-
   <form id="finalForm" method="POST" action="{% if edit_mode %}{{ url_for('editar_ficha', id=ficha.id) }}{% else %}{{ url_for('criar_ficha_final') }}{% endif %}">
     <div class="grid">
       <div>
         <div class="card">
           <label>Nome do Personagem</label>
-          <input type="text" name="nome" id="nome" value="{{ ficha.nome if ficha and ficha.nome is defined else '' }}" required>
+          <input type="text" name="nome" id="nome" value="{{ ficha.nome or '' }}" required>
           <label style="margin-top:10px">Idade</label>
-          <input type="number" name="idade" id="idade" value="{{ ficha.idade if ficha and ficha.idade is defined else '' }}" min="0">
-          <div style="margin-top:12px; display:flex; gap:10px;">
-            <div>
- <div class="card">
-  <h3 style="color:var(--accent)">Atributos</h3>
-
-  <div class="attr-grid">
-    <div>
-      <label>Poder (P)</label>
-      <input type="number" id="attrP" name="poder" min="0" max="10"
-             value="{{ ficha.poder if ficha and ficha.poder is defined else 0 }}">
-    </div>
-
-    <div>
-      <label>Habilidade (H)</label>
-      <input type="number" id="attrH" name="habilidade" min="0" max="10"
-             value="{{ ficha.habilidade if ficha and ficha.habilidade is defined else 0 }}">
-    </div>
-
-    <div>
-      <label>Resistência (R)</label>
-      <input type="number" id="attrR" name="resistencia" min="0" max="10"
-             value="{{ ficha.resistencia if ficha and ficha.resistencia is defined else 0 }}">
-    </div>
-  </div>
-</div>
-                  
-            
+          <input type="number" name="idade" id="idade" value="{{ ficha.idade or '' }}" min="0">
+        </div>
         <div class="card">
-          <h3 style="margin:0 0 8px 0; color:var(#FFA500)">Perícias (1 pt)</h3>
+          <h3 style="color:var(--accent)">Atributos</h3>
+          <div class="attr-grid">
+            <label>Poder (P)</label>
+            <input type="number" id="attrP" name="poder" min="0" max="10" value="{{ ficha.poder or 0 }}">
+            <label>Habilidade (H)</label>
+            <input type="number" id="attrH" name="habilidade" min="0" max="10" value="{{ ficha.habilidade or 0 }}">
+            <label>Resistência (R)</label>
+            <input type="number" id="attrR" name="resistencia" min="0" max="10" value="{{ ficha.resistencia or 0 }}">
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 8px 0; color:var(--accent)">Perícias (1 pt)</h3>
           <div class="list-scroll" id="periciasWrap"></div>
         </div>
-
         <div class="card">
           <h3 style="margin:0 0 8px 0; color:var(--accent)">Vantagens</h3>
           <div class="list-scroll" id="vantagensWrap"></div>
         </div>
-
         <div class="card">
           <h3 style="margin:0 0 8px 0; color:var(--accent)">Desvantagens (valem pontos)</h3>
           <div class="list-scroll" id="desvWrap"></div>
         </div>
-
         <div class="card">
           <h3 style="margin:0 0 8px 0; color:var(--accent)">Histórico / Notas</h3>
-          <textarea name="historico" id="historico">{{ ficha.historico if ficha and ficha.historico is defined else '' }}</textarea>
+          <textarea name="historico" id="historico">{{ ficha.historico or '' }}</textarea>
         </div>
-
       </div>
-
       <aside>
         <div class="card">
           <label>Pontos iniciais</label>
           <input type="number" id="initialPoints" value="10" min="0" />
-          <div style="margin-top:10px"><div class="meta">Perícias: <span id="periciasCost">0</span> pts</div></div>
-          <div style="margin-top:10px"><div class="meta">Vantagens: <span id="vantCost">0</span> pts</div></div>
-          <div style="margin-top:10px"><div class="meta">Desvantagens (ganho): <span id="desvGain">0</span> pts</div></div>
-
+          <div class="meta">Perícias: <span id="periciasCost">0</span> pts</div>
+          <div class="meta">Vantagens: <span id="vantCost">0</span> pts</div>
+          <div class="meta">Desvantagens (ganho): <span id="desvGain">0</span> pts</div>
           <hr style="margin:12px 0; border-top:1px solid rgba(255,255,255,0.03)" />
-
           <div class="meta">Pontos Restantes</div>
           <div class="points" id="pointsLeft">10</div>
-
-          <div style="margin-top:12px" class="controls">
+          <div class="controls">
             <button type="button" class="btn" onclick="prepareSubmit()">{% if edit_mode %}Salvar Alterações{% else %}Visualizar / Salvar{% endif %}</button>
             <button type="button" class="btn ghost" onclick="resetSelections()">Limpar</button>
             <a class="btn ghost" href="{{ url_for('fichas') }}">Cancelar</a>
           </div>
-
           <div class="meta" style="margin-top:10px">Perícia = 1pt. Vantagens têm custos variados. Desvantagens adicionam pontos (até -2 acumulado).</div>
         </div>
       </aside>
     </div>
-
-    <input type="hidden" name="pericias" id="periciasHidden" value="{{ ficha.pericias if ficha and ficha.pericias is defined else '' }}">
-    <input type="hidden" name="vantagens" id="vantagensHidden" value="{{ ficha.vantagens if ficha and ficha.vantagens is defined else '' }}">
-    <input type="hidden" name="desvantagens" id="desvantagensHidden" value="{{ ficha.desvantagens if ficha and ficha.desvantagens is defined else '' }}">
+    <input type="hidden" name="pericias" id="periciasHidden" value="{{ ficha.pericias or '' }}">
+    <input type="hidden" name="vantagens" id="vantagensHidden" value="{{ ficha.vantagens or '' }}">
+    <input type="hidden" name="desvantagens" id="desvantagensHidden" value="{{ ficha.desvantagens or '' }}">
   </form>
 </div>
 
@@ -247,102 +219,75 @@ const desvantagens = [
   {k:"Tapado", l:"Tapado (–1pt)", g:1}
 ];
 
-function buildPills(list, containerId, prefix, onClickExtra){
+function buildPills(list, containerId, hiddenInputId) {
   const wrap = document.getElementById(containerId);
+  const selected = new Set((document.getElementById(hiddenInputId)?.value || "").split(',').map(v => v.trim()).filter(Boolean));
   wrap.innerHTML = "";
-  list.forEach(item=>{
-    const key = typeof item === 'string' ? item : (item.k || item);
-    const label = typeof item === 'string' ? item : (item.l || item.k);
+  list.forEach((item, index) => {
+    const key = typeof item === 'string' ? item : (item.k || index);
+    const label = item.l || item.k || key;
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'pill';
-    pill.dataset.key = key;
-    pill.innerText = label;
-    pill.addEventListener('click', ()=>{
-      pill.classList.toggle('active');
-      computePoints();
-      if(onClickExtra) onClickExtra();
-    });
-    const preVal = (document.getElementById(prefix+'Hidden')?.value || "");
-    if(preVal && preVal.includes(key)) pill.classList.add('active');
+    pill.dataset.value = label;
+    pill.dataset.cost = item.c || 0;
+    pill.dataset.gain = item.g || 0;
+    pill.textContent = label;
+    if (selected.has(label)) pill.classList.add('active');
+    pill.addEventListener('click', () => { pill.classList.toggle('active'); computePoints(); });
     wrap.appendChild(pill);
   });
 }
 
-buildPills(pericias, 'periciasWrap', 'pericias');
-buildPills(vantagens, 'vantagensWrap', 'vantagens');
-buildPills(desvantagens, 'desvWrap', 'desvantagens');
+buildPills(pericias, 'periciasWrap', 'periciasHidden');
+buildPills(vantagens, 'vantagensWrap', 'vantagensHidden');
+buildPills(desvantagens, 'desvWrap', 'desvantagensHidden');
 
-function computePoints(){
-  const initial = parseInt(document.getElementById('initialPoints').value) || 0;
-  const P = parseInt(document.getElementById('attrP')?.value) || 0;
-  const H = parseInt(document.getElementById('attrH')?.value) || 0;
-  const R = parseInt(document.getElementById('attrR')?.value) || 0;
-
-  const atributosCost = P + H + R;
-
-  const perCost = document.querySelectorAll('#periciasWrap .pill.active').length * 1;
-  document.getElementById('periciasCost').textContent = perCost;
-  
-  let vantCost = 0;
-  document.querySelectorAll('#vantagensWrap .pill.active').forEach(p=>{
-    const key = p.dataset.key;
-    const found = (vantagens.find(x=>x.k===key) || {c:1});
-    vantCost += found.c || 1;
-  });
-  document.getElementById('vantCost').textContent = vantCost;
-  
-  let desvGain = 0;
-  document.querySelectorAll('#desvWrap .pill.active').forEach(p=>{
-    const key = p.dataset.key;
-    const found = (desvantagens.find(x=>x.k===key) || {g:1});
-    desvGain += found.g || 1;
-  });
-  document.getElementById('desvGain').textContent = desvGain;
-
-  const left = initial - (atributosCost + perCost + vantCost - desvGain);
-  document.getElementById('pointsLeft').textContent = left;
+function sumActive(selector, dataAttr, fallback = 0) {
+  return Array.from(document.querySelectorAll(`${selector} .pill.active`)).reduce((total, el) => total + (parseInt(el.dataset[dataAttr], 10) || fallback), 0);
 }
 
-document.getElementById('initialPoints').addEventListener('input', computePoints);
-computePoints();
+function computePoints() {
+  const initial = parseInt(document.getElementById('initialPoints').value, 10) || 0;
+  const atributosCost = ['attrP', 'attrH', 'attrR'].reduce((total, id) => total + (parseInt(document.getElementById(id)?.value, 10) || 0), 0);
+  const perCost = document.querySelectorAll('#periciasWrap .pill.active').length;
+  const vantCost = sumActive('#vantagensWrap', 'cost', 1);
+  const desvGain = sumActive('#desvWrap', 'gain', 1);
 
-function prepareSubmit(){
-  const selPer = Array.from(document.querySelectorAll('#periciasWrap .pill.active')).map(p=>p.dataset.key);
-  document.getElementById('periciasHidden').value = selPer.join(', ');
+  document.getElementById('periciasCost').textContent = perCost;
+  document.getElementById('vantCost').textContent = vantCost;
+  document.getElementById('desvGain').textContent = desvGain;
+  document.getElementById('pointsLeft').textContent = initial - (atributosCost + perCost + vantCost - desvGain);
+}
 
-  const selV = Array.from(document.querySelectorAll('#vantagensWrap .pill.active')).map(p=>p.dataset.key);
-  document.getElementById('vantagensHidden').value = selV.join(', ');
+function updateHidden(containerId, hiddenId) {
+  const values = Array.from(document.querySelectorAll(`#${containerId} .pill.active`)).map(p => p.dataset.value);
+  document.getElementById(hiddenId).value = values.join(', ');
+}
 
-  const selD = Array.from(document.querySelectorAll('#desvWrap .pill.active')).map(p=>p.dataset.key);
-  document.getElementById('desvantagensHidden').value = selD.join(', ');
-
+function prepareSubmit() {
+  updateHidden('periciasWrap', 'periciasHidden');
+  updateHidden('vantagensWrap', 'vantagensHidden');
+  updateHidden('desvWrap', 'desvantagensHidden');
   computePoints();
-  if(confirm("Salvar ficha?\nPontos restantes: " + document.getElementById('pointsLeft').textContent)){
+  if (confirm("Salvar ficha?\nPontos restantes: " + document.getElementById('pointsLeft').textContent)) {
     document.getElementById('finalForm').submit();
   }
 }
-function resetSelections(){
-  document.querySelectorAll('.pill').forEach(p =>
-    p.classList.remove('active')
-  );
 
-  document.getElementById('periciasHidden').value = '';
-  document.getElementById('vantagensHidden').value = '';
-  document.getElementById('desvantagensHidden').value = '';
-
-  document.getElementById('attrP').value = 0;
-  document.getElementById('attrH').value = 0;
-  document.getElementById('attrR').value = 0;
-
+function resetSelections() {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  ['periciasHidden', 'vantagensHidden', 'desvantagensHidden'].forEach(id => document.getElementById(id).value = '');
+  ['attrP', 'attrH', 'attrR'].forEach(id => document.getElementById(id).value = 0);
   computePoints();
 }
+
+document.getElementById('initialPoints').addEventListener('input', computePoints);
 ['attrP','attrH','attrR'].forEach(id => {
   const el = document.getElementById(id);
-  if(el) el.addEventListener('input', computePoints);
+  if (el) el.addEventListener('input', computePoints);
 });
-
-}
+computePoints();
 </script>
 </body>
 </html>
