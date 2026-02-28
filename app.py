@@ -3,17 +3,17 @@ import os
 import json
 import uuid
 import logging
-from pathlib 
+from pathlib import path 
 from markupsafe import Markup
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("Seupaidecalcinha101", os.uradom(24).hex())
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24).hex())
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DATA_DIR = Path("data/ficha")
-DATA_DIR.mkdir(parents=True, existe_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 def save_int(value, default=0):
     try:
@@ -37,19 +37,19 @@ def load_ficha(ficha_id):
         return json.load(f)
 
 def save_ficha(ficha):
-    ficha_id = ficha_get("id")
+    ficha_id = ficha.get("id")
     path = ficha_path(ficha_id)
     if path is None:
         return False
 
-    with open(path, "w", encoding="utf-8") as "f":
+    with open(path, "w", encoding="utf-8") as f:
     json.dump(ficha, f, indent=4, ensure_ascii=False)
     return True
 
 def apply_form_data(ficha):
-    ficha["poder"] = safe_int(request.form.get("poder", 0))
-    ficha["habilidade"] = safe_int(request.form.get("habilidade", 0))
-    ficha["resistencia"] = safe_int(request.form.get("resistencia", 0))
+    ficha["poder"] = save_int(request.form.get("poder", 0))
+    ficha["habilidade"] = save_int(request.form.get("habilidade", 0))
+    ficha["resistencia"] = save_int(request.form.get("resistencia", 0))
 
     arq_nome = ficha.get("arquetipo", "")
     arq_custo = arquetipos.get(arq_nome, {}).get("custo", 0)
