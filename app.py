@@ -367,12 +367,18 @@ def criar_ficha_final():
             return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
 
 
-ficha["id"] = str(uuid.uuid4())
+if request.method == "POST":
+    ficha["id"] = str(uuid.uuid4())
     save_ficha(ficha)
+
     session.pop("ficha", None)
     return redirect(url_for("fichas"))
 
-    return render_template("criar_ficha_final.html", ficha=ficha, arquetipos=arquetipos)
+return render_template(
+    "criar_ficha_final.html",
+    ficha=ficha,
+    arquetipos=arquetipos
+)
 
 # ---------------------------------------------------------------------
 # EDITAR FICHA
