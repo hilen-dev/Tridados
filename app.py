@@ -363,7 +363,7 @@ def criar_ficha_final():
     if request.method == "POST":
        apply_form_data(ficha)
 
-        if ficha["pontos_gastos"] > 10:
+    if ficha["pontos_gastos"] > 10:
             return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
 
         # --- SALVAR ---
