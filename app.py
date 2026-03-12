@@ -380,7 +380,7 @@ def criar_ficha_final():
 # ---------------------------------------------------------------------
 @app.route("/editar_ficha/<id>", methods=["GET", "POST"])
 def editar_ficha(id):
-    fica = load_ficha(id)
+    ficha = load_ficha(id)
     if ficha is None:
         return "Ficha não encontrada", 404
 
