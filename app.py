@@ -392,7 +392,7 @@ def editar_ficha(id):
         if ficha["pontos_gastos"] > 10:
             return "Desculpa, a quantidade maxima de pontos foi exedida, analize novamente.", 400
 
-     save_ficha(ficha)
+        save_ficha(ficha)
 
         return redirect(url_for("ficha", id=id))
 
