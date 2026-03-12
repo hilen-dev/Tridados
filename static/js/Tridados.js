@@ -74,3 +74,8 @@ for(const key in data){
   if(field) field.value = data[key];
 }
 }
+
+const arqCost =
+  parseInt(document.getElementById('arquetipoCost')?.value || 0)
+
+const pointsLeft = initial -(atributosCost + perCost + vantCost + arqCost - desvGain)
