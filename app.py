@@ -3,7 +3,7 @@ import os
 import json
 import uuid
 import logging
-from pathlib import path 
+from pathlib import Path 
 from markupsafe import Markup
 
 app = Flask(__name__)
@@ -26,7 +26,7 @@ def ficha_path(ficha_id):
         valid_id = str(uuid.UUID(ficha_id))
     except (TypeError, ValueError):
         return None
-        return DATA_DIR / f"{valid_id}.json"
+    return DATA_DIR / f"{valid_id}.json"
 
 def load_ficha(ficha_id):
     path = ficha_path(ficha_id)
@@ -43,7 +43,7 @@ def save_ficha(ficha):
         return False
 
     with open(path, "w", encoding="utf-8") as f:
-    json.dump(ficha, f, indent=4, ensure_ascii=False)
+        json.dump(ficha, f, indent=4, ensure_ascii=False)
     return True
 
 def apply_form_data(ficha):
@@ -361,15 +361,14 @@ def criar_ficha_final():
     ficha = session["ficha"]
 
     if request.method == "POST":
-
-  apply_form_data(ficha)
+       apply_form_data(ficha)
 
         if ficha["pontos_gastos"] > 10:
             return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
 
         # --- SALVAR ---
-       ficha_id=str(uuid.uuid4())
-       save_ficha(ficha)
+       ficha[id] = str(uuid.uuid4())
+        save_ficha(ficha)
 
         session.pop("ficha", None)
         return redirect(url_for("fichas"))
@@ -381,16 +380,17 @@ def criar_ficha_final():
 # ---------------------------------------------------------------------
 @app.route("/editar_ficha/<id>", methods=["GET", "POST"])
 def editar_ficha(id):
+    fica = load_ficha(id)
     if ficha is None:
         return "Ficha não encontrada", 404
 
-        if request.method == "POST":
+    if request.method == "POST":
         apply_form_data(ficha)
 
-       if ficha["pontos_gastos"] > 10:
-           return "Desculpa, a quantidade maxima de pontos foi exedida, analize novamente.", 400
+        if ficha["pontos_gastos"] > 10:
+            return "Desculpa, a quantidade maxima de pontos foi exedida, analize novamente.", 400
 
-save_ficha(ficha)
+     save_ficha(ficha)
 
         return redirect(url_for("ficha", id=id))
 
@@ -402,9 +402,9 @@ save_ficha(ficha)
 @app.route("/fichas")
 def fichas():
     lista = []
-    for arquivo in DATA_DIR.interdir():
-        if arquivo.sufix == ".json":
-            with open(arquivo", "r", encoding="utf-8") as f:
+    for arquivo in DATA_DIR.iterdir():
+        if arquivo.suffix == ".json":
+            with open(arquivo, "r", encoding="utf-8") as f:
                 lista.append(json.load(f))
     return render_template("fichas.html", fichas=lista)
 
@@ -413,8 +413,8 @@ def fichas():
 # ---------------------------------------------------------------------
 @app.route("/ficha/<id>")
 def ficha(id):
-    dados = load_ficha(id):
-        if dados is None:
+    dados = load_ficha(id)
+    if dados is None:
         return "Ficha não encontrada", 404
 
     return render_template("ver_ficha.html", ficha=dados)
