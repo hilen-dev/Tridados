@@ -402,7 +402,7 @@ def editar_ficha(id):
 @app.route("/fichas")
 def fichas():
     lista = []
-    for arquivo in DATA_DIR.iterdir():
+    for arquivo in DATA_DIR.iterdir("*.json"):
         if arquivo.suffix == ".json":
             with open(arquivo, "r", encoding="utf-8") as f:
                 lista.append(json.load(f))
