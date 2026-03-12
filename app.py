@@ -361,25 +361,22 @@ def criar_ficha_final():
     ficha = session["ficha"]
 
     if request.method == "POST":
-       apply_form_data(ficha)
+        apply_form_data(ficha)
 
-    if ficha["pontos_gastos"] > 10:
-            return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
+        if ficha["pontos_gastos"] > 10:
+            return "Desculpa, quantidade de pontos disponíveis foi excedida."
 
+        ficha["id"] = str(uuid.uuid4())
+        save_ficha(ficha)
 
-if request.method == "POST":
-    ficha["id"] = str(uuid.uuid4())
-    save_ficha(ficha)
+        session.pop("ficha", None)
+        return redirect(url_for("fichas"))
 
-    session.pop("ficha", None)
-    return redirect(url_for("fichas"))
-
-return render_template(
-    "criar_ficha_final.html",
-    ficha=ficha,
-    arquetipos=arquetipos
-)
-
+    return render_template(
+        "criar_ficha_final.html",
+        ficha=ficha,
+        arquetipos=arquetipos
+    )
 # ---------------------------------------------------------------------
 # EDITAR FICHA
 # ---------------------------------------------------------------------
