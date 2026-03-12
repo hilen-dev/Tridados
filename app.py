@@ -7,9 +7,7 @@ from pathlib import Path
 from markupsafe import Markup
 
 app = Flask(__name__)
-app.secret_key =
-os.environ.get("SECRET_KEY",
-os.urandom(24).hex())
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24).hex())
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
