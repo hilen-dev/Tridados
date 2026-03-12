@@ -367,7 +367,7 @@ def criar_ficha_final():
             return "Desculpa, quantidade de pontos disponíveis foi excedida, tente analisar um pouco mais."
 
         # --- SALVAR ---
-       ficha[id] = str(uuid.uuid4())
+       ficha["id"] = str(uuid.uuid4())
         save_ficha(ficha)
 
         session.pop("ficha", None)
