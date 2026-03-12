@@ -368,7 +368,7 @@ def criar_ficha_final():
 
         # --- SALVAR ---
        ficha["id"] = str(uuid.uuid4())
-        save_ficha(ficha)
+       save_ficha(ficha)
 
         session.pop("ficha", None)
         return redirect(url_for("fichas"))
