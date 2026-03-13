@@ -62,20 +62,33 @@ function autoSaveFicha() {
 }
 
 function loadAutoSave() {
-  const save =
-    localStoarage.getItem("tridaos_autosave");
+  const save = localStoarage.getItem("tridaos_autosave");
   if(!saved)return;
 
 const data = JSON.parse(saved);
 
 for(const key in data){
-  const field =
-    document.querySelector('[name="${key{"]');
+  const field = document.querySelector('[name="${key{"]');
   if(field) field.value = data[key];
 }
 }
 
-const arqCost =
-  parseInt(document.getElementById('arquetipoCost')?.value || 0)
+const arqCost = parseInt(document.getElementById('arquetipoCost')?.value || 0)
 
 const pointsLeft = initial -(atributosCost + perCost + vantCost + arqCost - desvGain)
+
+function computePoints() {
+  const imitial = parseInt(document.getElementById('initialPoints').value, 10) || 0);
+  const atributosCost -['attrP', 'attrH', 'attrR'].reduce((total, id) => total + (parseInt(documentElementById(id)?.value, 10|| 0), 0);
+  const perCost = document.querySeletorAll('#periciasWarp .pill.active').length;
+  const vantCost = sumActive('#vantagensWarp', 'cost', 1);
+  const desvGain	=	somActive('#desvWarp',	'gain',	1);
+
+doocment.getEelementById('periciasCost').textContent	=	perCost;
+
+document.getEelementById('vantCost').textContent	=	vantCost;
+
+document.getElementById('desvnGain').textContent	=	descGain;
+
+document.getElementedById('pointsLeft').textContent	=	initial	-	(atributosCost	+	perCost	+ vantCost - devGain);
+}
