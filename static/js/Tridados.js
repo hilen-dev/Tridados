@@ -78,17 +78,26 @@ const arqCost = parseInt(document.getElementById('arquetipoCost')?.value || 0)
 const pointsLeft = initial -(atributosCost + perCost + vantCost + arqCost - desvGain)
 
 function computePoints() {
-  const imitial = parseInt(document.getElementById('initialPoints').value, 10) || 0);
-  const atributosCost -['attrP', 'attrH', 'attrR'].reduce((total, id) => total + (parseInt(documentElementById(id)?.value, 10|| 0), 0);
-  const perCost = document.querySeletorAll('#periciasWarp .pill.active').length;
-  const vantCost = sumActive('#vantagensWarp', 'cost', 1);
-  const desvGain	=	somActive('#desvWarp',	'gain',	1);
 
-doocment.getEelementById('periciasCost').textContent	=	perCost;
+  const initial = parseInt(document.getElementById('initialPoints').value, 10) || 0;
 
-document.getEelementById('vantCost').textContent	=	vantCost;
+  const atributosCost = ['attrP', 'attrH', 'attrR']
+    .reduce((total, id) => total + (parseInt(document.getElementById(id)?.value, 10) || 0), 0);
 
-document.getElementById('desvnGain').textContent	=	descGain;
+  const perCost = document.querySelectorAll('#periciasWrap .pill.active').length;
 
-document.getElementedById('pointsLeft').textContent	=	initial	-	(atributosCost	+	perCost	+ vantCost - devGain);
+  const vantCost = sumActive('#vantagensWrap', 'cost', 1);
+
+  const desvGain = sumActive('#desvWrap', 'gain', 1);
+
+  const arqCost = parseInt(document.getElementById('arquetipoCost')?.value || 0);
+
+  document.getElementById('periciasCost').textContent = perCost;
+  document.getElementById('vantCost').textContent = vantCost;
+  document.getElementById('desvGain').textContent = desvGain;
+
+  document.getElementById('pointsLeft').textContent =
+    initial - (atributosCost + perCost + vantCost + arqCost - desvGain);
 }
+
+
