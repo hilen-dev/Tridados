@@ -50,7 +50,7 @@ function computePoints() {
   document.getElementById('desvGain').textContent = desvGain;
   document.getElementById('pointsLeft').textContent = total;
 
-  function uodatePointsUi(total){
+  function updatePointsUi(total){
     const pointsEl = documentgetElementById('pointsLeft');
 
     if (!pointsEl) return;
