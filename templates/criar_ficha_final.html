@@ -260,8 +260,8 @@ function buildPills(list, containerId, hiddenInputId) {
 }
 
   function setupEvents() {
-    document.addEventListener("input", (e) => {if (e.target.maches("#initialPoints, [id^='atr']")) {
-      computepoints();
+    document.addEventListener("input", (e) => {if (e.target.matches("#initialPoints, [id^='atr']")) {
+      computePoints();
     }
                                               });
     document.addEventListener("click", (e) => {
@@ -283,8 +283,8 @@ function computePoints() {
   const perCost = document.querySelectorAll('#periciasWrap .pill.active').length;
   const vantCost = sumActive('#vantagensWrap', 'cost');
   const desvGain = sumActive('#desvWrap', 'gain');
-  const arpCost = parseInt(document.getElementById('arquetipoCost')?.value, 10)|| 0;
-  const total = initial - (atributosCost + perCost + arqCost - desvGain);
+  const arqCost = parseInt(document.getElementById('arquetipoCost')?.value, 10)|| 0;
+  const total = initial - (atributosCost + perCost + vantCost + arqCost - desvGain);
 
   document.getElementById('periciasCost').textContent = perCost;
   document.getElementById('vantCost').textContent = vantCost;
@@ -294,7 +294,7 @@ function computePoints() {
 }
 
   function updatePointsUI(total) {
-    const pointsEL = document.getElementById('pointsLeft');
+    const pointsEl = document.getElementById('pointsLeft');
     if (!pointsEl) return;
 
     pointsEl.textContent = total;
@@ -318,7 +318,7 @@ function prepareSubmit() {
 
 function resetSelections() {
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  ['periciasHidden', 'vantagensHidden', 'desvantagensHidden'].forEach(id => document.getElementById(id).value = 0);
+  ['periciasHidden', 'vantagensHidden', 'desvantagensHidden'].forEach(id => document.getElementById(id).value = "");
   ['attrP', 'attrH', 'attrR'].forEach(id => document.getElementById(id).value = 0);
   computePoints();
 }
@@ -334,7 +334,7 @@ function resetSelections() {
     return true;
   }
 
-  function setupForm Validation() {
+  function setupFormValidation() {
     const form = document.querySelector("form");
 
     if (form) {
