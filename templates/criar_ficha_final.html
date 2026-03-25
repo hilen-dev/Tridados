@@ -95,10 +95,10 @@
 <script>
 document.addEventListener("DOMContentLoaded", initTridados);
 
-  funtion initTridados() {
-    buildPills(pericias, `periciasWrap`, `periciasHiden`);
-    buildPills(vantagens, `vantagensWrap`, `vantagensHiden`);
-    buildPills(desvantagens, `desvantagensWrap`, `desvanagensHiden`);
+  function initTridados() {
+    buildPills(pericias, `periciasWrap`, `periciasHidden`);
+    buildPills(vantagens, `vantagensWrap`, `vantagensHidden`);
+    buildPills(desvantagens, `desvantagensWrap`, `desvanagensHidden`);
 
     setupEvents();
     setupFromValidetion();
@@ -259,7 +259,7 @@ function buildPills(list, containerId, hiddenInputId) {
   });
 }
 
-  funtion setupEvents() {
+  function setupEvents() {
     document.addEventListener("input", (e) => {if (e.target.maches("#initialPoints, [id^='atr']")) {
       computepoints();
     }
@@ -334,7 +334,7 @@ function resetSelections() {
     return true;
   }
 
-  function setupFormValidation() {
+  function setupForm Validation() {
     const form = document.querySelector("form");
 
     if (form) {
