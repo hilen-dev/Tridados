@@ -64,7 +64,7 @@ function updatePointsUI(total){
 }
 
 function sumActive(selector, dataAttr) {
-  return Array.from(document.querySelectorAll(`${selector}.pill.active`)).reduce((total, el) => {
+  return Array.from(document.querySelectorAll(`${selector} .pill.active`)).reduce((total, el) => {
     const value = Number(el.dataset[dataAttr]);
     return total + (Number.isNaN(value) ? 0: value);
   }, 0);
