@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", initTridados);
 
     setupEvents();
     setupFromValidation();
+    setupFormValidation();
     computePoints();
   }
 
@@ -313,7 +314,7 @@ function prepareSubmit() {
   updateHidden('desvWrap', 'desvantagensHidden');
   computePoints();
   if (confirm("Salvar ficha?\nPontos restantes: " + document.getElementById('pointsLeft').textContent)) {
-    document.getElementById('finalForm').submit();
+    document.getElementById('finalForm').requestSubmit();
   }
 }
 
@@ -336,16 +337,16 @@ function resetSelections() {
   }
 
   function setupFormValidation() {
-    const form = document.querySelector("form");
+  const form = document.querySelector("form");
 
-    if (form) {
-      form.addEventListener("submit", e => {
-        if(!validateFicha()) {
-          e.preventDefault();
-        }
-      });
-    }
+  if (form) {
+    form.addEventListener("submit", e => {
+      if(!validateFicha()) {
+        e.preventDefault();
+      }
+    });
   }
+}
 </script>
 </body>
 </html>
