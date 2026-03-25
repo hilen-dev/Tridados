@@ -70,7 +70,6 @@
           <label>Pontos iniciais</label>
           <input type="number" id="initialPoints" value="10" min="0" />
           <input type="hidden" id="arquetipoCost" value="{{ficha.custo_arquetipo or 0 }}">
-          <input type="hidden" id="arquetiposCost" value="{{ficha.custo_arquetipo or 0 }}">
           <div class="meta">Perícias: <span id="periciasCost">0</span> pts</div>
           <div class="meta">Vantagens: <span id="vantCost">0</span> pts</div>
           <div class="meta">Desvantagens (ganho): <span id="desvGain">0</span> pts</div>
@@ -116,18 +115,18 @@ const vantagens = [
   {k:"Alcance 2", l:"Alcance 2 (2pt)", c:2},
   {k:"Anulação", l:"Anulação (2pts)", c:2},
   {k:"Arena", l:"Arena (1pt)", c:1},
-  {k:"Ataque Eapecial (Área)", l:"Ataque Especial (Área) (1pt)", c:1},
-  {k:"Ataque Eapecial (Choque)", l:"Ataque Especial (Choque) (1pt)", c:1},
-  {k:"Ataque Eapecial (Distante)", l:"Ataque Especial (Distante) (1pt)", c:1},
-  {k:"Ataque Eapecial (Espiritual)", l:"Ataque Especial (Espiritual) (1pt)", c:1},
-  {k:"Ataque Eapecial (Investida)", l:"Ataque Especial (Investida) (1pt)", c:1},
-  {k:"Ataque Eapecial (Múltiplo)", l:"Ataque Especial (Múltiplo) (1pt)", c:1},
-  {k:"Ataque Eapecial (Penetrante)", l:"Ataque Especial (Penetrante) (1pt)", c:1},
-  {k:"Ataque Eapecial (Perigoso)", l:"Ataque Especial (Perigoso) (1pt)", c:1},
-  {k:"Ataque Eapecial (Poderoso)", l:"Ataque Especial (Poderoso) (1pt)", c:1},
-  {k:"Ataque Eapecial (Potente)", l:"Ataque Especial (Potente) (1pt)", c:1},
-  {k:"Ataque Eapecial (Preciso)", l:"Ataque Especial (Preciso) (1pt)", c:1},
-  {k:"Ataque Eapecial (Titanico)", l:"Ataque Especial (Titanico) (1pt)", c:1},
+  {k:"Ataque Especial (Área)", l:"Ataque Especial (Área) (1pt)", c:1},
+  {k:"Ataque Especial (Choque)", l:"Ataque Especial (Choque) (1pt)", c:1},
+  {k:"Ataque Especial (Distante)", l:"Ataque Especial (Distante) (1pt)", c:1},
+  {k:"Ataque Especial (Espiritual)", l:"Ataque Especial (Espiritual) (1pt)", c:1},
+  {k:"Ataque Especial (Investida)", l:"Ataque Especial (Investida) (1pt)", c:1},
+  {k:"Ataque Especial (Múltiplo)", l:"Ataque Especial (Múltiplo) (1pt)", c:1},
+  {k:"Ataque Especial (Penetrante)", l:"Ataque Especial (Penetrante) (1pt)", c:1},
+  {k:"Ataque Especial (Perigoso)", l:"Ataque Especial (Perigoso) (1pt)", c:1},
+  {k:"Ataque Especial (Poderoso)", l:"Ataque Especial (Poderoso) (1pt)", c:1},
+  {k:"Ataque Especial (Potente)", l:"Ataque Especial (Potente) (1pt)", c:1},
+  {k:"Ataque Especial (Preciso)", l:"Ataque Especial (Preciso) (1pt)", c:1},
+  {k:"Ataque Especial (Titanico)", l:"Ataque Especial (Titanico) (1pt)", c:1},
   {k:"Base", l:"Base (1pt)", c:1},
   {k:"Brutal (Vida)", l:"Brutal (Vida) (1pt)", c:1},
   {k:"Brutal (Mana)", l:"Brutal (Mana) (1pt)", c:1},
@@ -195,8 +194,8 @@ const vantagens = [
   {k:"Telepata", l:"Telepata (1pt)", c:1},
   {k:"Teleporte", l:"Teleporte (1pt)", c:1},
   {k:"Torcida", l:"Torcida (1pt)", c:1},
-  {k:"Transormação", l:"Transformção (1pts)", c:1},
-  {k:"Transormação", l:"Transformção (2pts)", c:2},
+  {k:"Transformação", l:"Transformção (1pts)", c:1},
+  {k:"Transformação", l:"Transformção (2pts)", c:2},
   {k:"+Vida", l:"+Vida (1pt)", c:1},
   {k:"Vigoroso", l:"Vigoroso (1pt)", c:1},
   {k:"Voo", l:"Voo (1pt)", c:1}
@@ -251,7 +250,7 @@ function buildPills(list, containerId, hiddenInputId) {
     pill.dataset.gain = item.g || 0;
     pill.textContent = label;
     
-    if (selected.has(label)) {
+    if (selected.has(key)) {
       pill.classList.add('active');
     }
     
