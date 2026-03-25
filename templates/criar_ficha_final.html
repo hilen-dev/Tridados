@@ -93,6 +93,18 @@
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", initTridados);
+
+  funtion initTridados() {
+    buildPills(pericias, `periciasWrap`, `periciasHiden`);
+    buildPills(vantagens, `vantagensWrap`, `vantagensHiden`);
+    buildPills(desvantagens, `desvantagensWrap`, `desvanagensHiden`);
+
+    setupEvents();
+    setupFromValidetion();
+    computePoints();
+  }
+
 const pericias = ["Animais","Arte","Esportes","Influência","Luta","Manha","Máquinas","Medicina","Mística","Percepção","Saber","Sobrevivência"];
 const vantagens = [
   {k:"Aceleração", l:"Aceleração (1pt)", c:1},
@@ -224,10 +236,13 @@ const desvantagens = [
 function buildPills(list, containerId, hiddenInputId) {
   const wrap = document.getElementById(containerId);
   const selected = new Set((document.getElementById(hiddenInputId)?.value || "").split(',').map(v => v.trim()).filter(Boolean));
+  
   wrap.innerHTML = "";
+  
   list.forEach((item, index) => {
-    const key = typeof item === 'string' ? item : (item.k || index);
+    const key = typeof item === 'string'? item : (item.k || index);
     const label = item.l || item.k || key;
+    
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'pill';
@@ -235,17 +250,30 @@ function buildPills(list, containerId, hiddenInputId) {
     pill.dataset.cost = item.c || 0;
     pill.dataset.gain = item.g || 0;
     pill.textContent = label;
-    if (selected.has(label)) pill.classList.add('active');
-    pill.addEventListener('click', () => { pill.classList.toggle('active'); computePoints(); });
+    
+    if (selected.has(label)) {
+      pill.classList.add('active');
+    }
+    
     wrap.appendChild(pill);
   });
 }
 
-buildPills(pericias, 'periciasWrap', 'periciasHidden');
-buildPills(vantagens, 'vantagensWrap', 'vantagensHidden');
-buildPills(desvantagens, 'desvWrap', 'desvantagensHidden');
+  funtion setupEvents() {
+    document.addEventListener("input", (e) => {if (e.target.maches("#initialPoints, [id^='atr']")) {
+      computepoints();
+    }
+                                              });
+    document.addEventListener("click", (e) => {
+      const pill = e.target.closest(".pill");
+      if (pill) {
+        pill.classList.toggle("active");
+        computePoints();
+      }
+    });
+  }
 
-function sumActive(selector, dataAttr, fallback = 0) {
+  function sumActive(selector, dataAttr, fallback = 0) {
   return Array.from(document.querySelectorAll(`${selector} .pill.active`)).reduce((total, el) => total + (parseInt(el.dataset[dataAttr], 10) || fallback), 0);
 }
 
@@ -253,15 +281,26 @@ function computePoints() {
   const initial = parseInt(document.getElementById('initialPoints').value, 10) || 0;
   const atributosCost = ['attrP', 'attrH', 'attrR'].reduce((total, id) => total + (parseInt(document.getElementById(id)?.value, 10) || 0), 0);
   const perCost = document.querySelectorAll('#periciasWrap .pill.active').length;
-  const vantCost = sumActive('#vantagensWrap', 'cost', 1);
-  const desvGain = sumActive('#desvWrap', 'gain', 1);
+  const vantCost = sumActive('#vantagensWrap', 'cost');
+  const desvGain = sumActive('#desvWrap', 'gain');
+  const arpCost = parseInt(document.getElementById('arquetipoCost')?.value, 10)|| 0;
+  const total = initial - (atributosCost + perCost + arqCost - desvGain);
 
   document.getElementById('periciasCost').textContent = perCost;
   document.getElementById('vantCost').textContent = vantCost;
   document.getElementById('desvGain').textContent = desvGain;
-  document.getElementById('pointsLeft').textContent = initial - (atributosCost + perCost + vantCost - desvGain);
+  
+    updatePointsUI(total);
 }
 
+  function updatePointsUI(total) {
+    const pointsEL = document.getElementById('pointsLeft');
+    if (!pointsEl) return;
+
+    pointsEl.textContent = total;
+    pointsEl.style.color = total < 0? "red": "green";
+  }
+  
 function updateHidden(containerId, hiddenId) {
   const values = Array.from(document.querySelectorAll(`#${containerId} .pill.active`)).map(p => p.dataset.value);
   document.getElementById(hiddenId).value = values.join(', ');
@@ -279,17 +318,33 @@ function prepareSubmit() {
 
 function resetSelections() {
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  ['periciasHidden', 'vantagensHidden', 'desvantagensHidden'].forEach(id => document.getElementById(id).value = '');
+  ['periciasHidden', 'vantagensHidden', 'desvantagensHidden'].forEach(id => document.getElementById(id).value = 0);
   ['attrP', 'attrH', 'attrR'].forEach(id => document.getElementById(id).value = 0);
   computePoints();
 }
 
-document.getElementById('initialPoints').addEventListener('input', computePoints);
-['attrP','attrH','attrR'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', computePoints);
-});
-computePoints();
+  function validateFicha() {
+    const pontos = parseInt(document.getElementById('pointsLeft').textContent) || 0;
+
+    if (pontos < 0) {
+      alert("Você gastou mais pontos do que possui.");
+      return false;
+    }
+
+    return true;
+  }
+
+  function setupFormValidation() {
+    const form = document.querySelector("form");
+
+    if (form) {
+      form.addEventListener("submit", e => {
+        if(!validateFicha()) {
+          e.preventDefault();
+        }
+      });
+    }
+  }
 </script>
 </body>
 </html>
