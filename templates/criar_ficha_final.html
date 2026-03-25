@@ -285,7 +285,7 @@ function computePoints() {
   const desvGain = sumActive('#desvWrap', 'gain');
   const arqCost = parseInt(document.getElementById('arquetipoCost')?.value, 10)|| 0;
   const maxDesv = Math.min(desvGain, 2);
-  const total = initial - (atributosCost + perCost + vantCost + arqCost - desvGain);
+  const total = initial - (atributosCost + perCost + vantCost + arqCost - maxDesv);
 
   
   document.getElementById('periciasCost').textContent = perCost;
@@ -336,7 +336,7 @@ function resetSelections() {
     return true;
   }
 
-  function setupFormValidation(); {
+  function setupFormValidation() {
     const form = document.querySelector("form");
 
     if (form) {
