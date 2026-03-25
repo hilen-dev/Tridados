@@ -246,8 +246,8 @@ function buildPills(list, containerId, hiddenInputId) {
     pill.type = 'button';
     pill.className = 'pill';
     pill.dataset.value = key;
-    pill.dataset.cost = item.c || 0;
-    pill.dataset.gain = item.g || 0;
+    pill.dataset.cost = (item && item.c)? item.c : 0;
+    pill.dataset.gain = (item && item.g)? item.g : 0;
     pill.textContent = label;
     
     if (selected.has(key)) {
@@ -299,7 +299,9 @@ function computePoints() {
     if (!pointsEl) return;
 
     pointsEl.textContent = total;
-    pointsEl.style.color = total < 0? "red": "green";
+    if (total < 0) {
+      pointsEl.TextContent = total + "(Excedido!)";
+    }
   }
   
 function updateHidden(containerId, hiddenId) {
