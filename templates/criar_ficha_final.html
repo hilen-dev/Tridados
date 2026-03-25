@@ -70,7 +70,7 @@
           <label>Pontos iniciais</label>
           <input type="number" id="initialPoints" value="10" min="0" />
           <input type="hidden" id="arquetipoCost" value="{{ficha.custo_arquetipo or 0 }}">
-          <INPUT TYPE="hiden" id="arquetiposCost" value="{{ficha.custo_arquetipo or 0 }}">
+          <input type="hidden" id="arquetiposCost" value="{{ficha.custo_arquetipo or 0 }}">
           <div class="meta">Perícias: <span id="periciasCost">0</span> pts</div>
           <div class="meta">Vantagens: <span id="vantCost">0</span> pts</div>
           <div class="meta">Desvantagens (ganho): <span id="desvGain">0</span> pts</div>
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", initTridados);
   function initTridados() {
     buildPills(pericias, `periciasWrap`, `periciasHidden`);
     buildPills(vantagens, `vantagensWrap`, `vantagensHidden`);
-    buildPills(desvantagens, `desvWrap`, `desvHidden`);
+    buildPills(desvantagens, `desvWrap`, `desvantagensHidden`);
 
     setupEvents();
     setupFromValidation();
@@ -179,8 +179,8 @@ const vantagens = [
   {k:"Obstinado", l:"Obstinado (1pt)", c:1},
   {k:"Paralisia", l:"Paralisia (1pt)", c:1},
   {k:"Patrono", l:"Patrono (1pt)", c:1},
-  {k:"Punição", l:"Punição (1pt)", c:1},
-  {k:"Punição", l:"Punição (2pts)", c:2},
+  {k:"Punição 1", l:"Punição (1pt)", c:1},
+  {k:"Punição 2", l:"Punição (2pts)", c:2},
   {k:"Regeneração 1", l:"Regeneração 1 (1pt)", c:1},
   {k:"Regeneração 2", l:"Regeneração 2 (2pts)", c:2},
   {k:"Resoluto", l:"Resoluto (1pt)", c:1},
@@ -205,11 +205,11 @@ const desvantagens = [
   {k:"Ambiente", l:"Ambiente (–1pt)", g:1},
   {k:"Amnesia", l:"Amnésia (–2pt)", g:2},
   {k:"Antipatico", l:"Antipático (–1pt)", g:1},
-  {k:"Assombrado", l:"Assombrado (-1pt)", g:1},
-  {k:"Assombrado", l:"Assombrado (-2pts)", g:2},
+  {k:"Assombrado 1", l:"Assombrado (-1pt)", g:1},
+  {k:"Assombrado 2", l:"Assombrado (-2pts)", g:2},
   {k:"Atrapalhado", l:"Atrapalhado (-1pt)", g:1},
-  {k:"Aura", l:"Aura (-1pt)", g:1},
-  {k:"Aura", l:"Aura (-2pts)", g:2},
+  {k:"Aura 1", l:"Aura (-1pt)", g:1},
+  {k:"Aura 2", l:"Aura (-2pts)", g:2},
   {k:"Bateria", l:"Bateria (-1pt)", g:1},
   {k:"Código (1ª Lei de Asimov)", l:"Código (1ª Lei de Asimov) (-1pt)", g:1},
   {k:"Código (2ª Lei de Asimov)", l:"Código (2ª Lei de Asimov) (-1pt)", g:1},
@@ -246,7 +246,7 @@ function buildPills(list, containerId, hiddenInputId) {
     const pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'pill';
-    pill.dataset.value = label;
+    pill.dataset.value = key;
     pill.dataset.cost = item.c || 0;
     pill.dataset.gain = item.g || 0;
     pill.textContent = label;
@@ -260,7 +260,7 @@ function buildPills(list, containerId, hiddenInputId) {
 }
 
   function setupEvents() {
-    document.addEventListener("input", (e) => {if (e.target.matches("#initialPoints, [id^='attr']")) {
+    document.addEventListener("input", (e) => { if (e.target.id === "initialPoints" || e.target.id.startsWith("attr")) {
       computePoints();
     }
                                               });
@@ -284,8 +284,10 @@ function computePoints() {
   const vantCost = sumActive('#vantagensWrap', 'cost');
   const desvGain = sumActive('#desvWrap', 'gain');
   const arqCost = parseInt(document.getElementById('arquetipoCost')?.value, 10)|| 0;
+  const maxDesv = Math.min(desvGain, 2);
   const total = initial - (atributosCost + perCost + vantCost + arqCost - desvGain);
 
+  
   document.getElementById('periciasCost').textContent = perCost;
   document.getElementById('vantCost').textContent = vantCost;
   document.getElementById('desvGain').textContent = desvGain;
@@ -334,7 +336,7 @@ function resetSelections() {
     return true;
   }
 
-  function setupFormValidation() {
+  function setupFormValidation(); {
     const form = document.querySelector("form");
 
     if (form) {
