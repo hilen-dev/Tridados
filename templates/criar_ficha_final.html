@@ -100,7 +100,6 @@ document.addEventListener("DOMContentLoaded", initTridados);
     buildPills(desvantagens, `desvWrap`, `desvantagensHidden`);
 
     setupEvents();
-    setupFromValidation();
     setupFormValidation();
     computePoints();
   }
@@ -195,8 +194,8 @@ const vantagens = [
   {k:"Telepata", l:"Telepata (1pt)", c:1},
   {k:"Teleporte", l:"Teleporte (1pt)", c:1},
   {k:"Torcida", l:"Torcida (1pt)", c:1},
-  {k:"Transformação", l:"Transformção (1pts)", c:1},
-  {k:"Transformação", l:"Transformção (2pts)", c:2},
+  {k:"Transformação 1", l:"Transformção (1pts)", c:1},
+  {k:"Transformação 2", l:"Transformção (2pts)", c:2},
   {k:"+Vida", l:"+Vida (1pt)", c:1},
   {k:"Vigoroso", l:"Vigoroso (1pt)", c:1},
   {k:"Voo", l:"Voo (1pt)", c:1}
@@ -225,8 +224,8 @@ const desvantagens = [
   {k:"Elo Vital", l:"Elo vital (-1pt)", g:1},
   {k:"Fracote", l:"Fracote (-1pt)", g:1},
   {k:"Frágil", l:"Frágil (-1pt)", g:1},
-  {k:"Fraqueza", l:"Fraqueza (-1pt)", g:1},
-  {k:"Fraqueza", l:"Fraqueza (-2pts)", g:2},
+  {k:"Fraqueza 1", l:"Fraqueza (-1pt)", g:1},
+  {k:"Fraqueza 2", l:"Fraqueza (-2pts)", g:2},
   {k:"Fúria", l:"Fúria (-1pt)", g:1},
   {k:"Pobreza", l:"Pobreza (–1pt)", g:1},
   {k:"Sem Vida", l:"Sem Vida (–2pt)", g:2},
@@ -240,8 +239,8 @@ function buildPills(list, containerId, hiddenInputId) {
   wrap.innerHTML = "";
   
   list.forEach((item, index) => {
-    const key = typeof item === 'string'? item : (item.k || index);
-    const label = item.l || item.k || key;
+    const key = typeof item === 'string'? item : item.k;
+    const label = typeof item === 'string'? item : item.l
     
     const pill = document.createElement('button');
     pill.type = 'button';
