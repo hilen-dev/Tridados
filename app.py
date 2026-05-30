@@ -361,6 +361,12 @@ def criar_ficha_final():
 
     ficha = session["ficha"]
 
+    # Garante custo_arquetipo disponivel no template ao carregar a pagina
+    arq_nome = ficha.get("arquetipo", "")
+    ficha["custo_arquetipo"] = arquetipos.get(arq_nome, {}).get("custo", 0)
+    session.modified = True
+
+
     if request.method == "POST":
         apply_form_data(ficha)
 
