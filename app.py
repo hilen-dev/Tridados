@@ -79,9 +79,9 @@ def nl2br(text):
         return ""
     return Markup(str(text).replace("\n", "<br>"))
     
-# ---------------------------------------------------------------------
+
 # ARQUETIPOS
-# ---------------------------------------------------------------------
+
 arquetipos = {
     "Humano": {
         "custo": 0,
@@ -334,9 +334,9 @@ arquetipos = {
     },
 }
 
-# ---------------------------------------------------------------------
+
 # INDEX
-# ---------------------------------------------------------------------
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -349,6 +349,7 @@ def criar_ficha_arquetipos():
 
     if request.method == "POST":
         session["ficha"]["arquetipo"] = request.form.get("arquetipo", "")
+        session.modified = True
         return redirect(url_for("criar_ficha_final"))
 
     return render_template("criar_ficha_arquetipos.html", arquetipos=arquetipos)
@@ -377,9 +378,9 @@ def criar_ficha_final():
         ficha=ficha,
         arquetipos=arquetipos
     )
-# ---------------------------------------------------------------------
+
 # EDITAR FICHA
-# ---------------------------------------------------------------------
+
 @app.route("/editar_ficha/<id>", methods=["GET", "POST"])
 def editar_ficha(id):
     ficha = load_ficha(id)
@@ -398,21 +399,21 @@ def editar_ficha(id):
 
     return render_template("criar_ficha_final.html", ficha=ficha, arquetipos=arquetipos, edit_mode=True)
 
-# ---------------------------------------------------------------------
+
 # LISTAR FICHAS
-# ---------------------------------------------------------------------
+
 @app.route("/fichas")
 def fichas():
     lista = []
-    for arquivo in DATA_DIR.iterdir("*.json"):
+    for arquivo in DATA_DIR.glob("*.json"):
         if arquivo.suffix == ".json":
             with open(arquivo, "r", encoding="utf-8") as f:
                 lista.append(json.load(f))
     return render_template("fichas.html", fichas=lista)
 
-# ---------------------------------------------------------------------
+
 # VER FICHA
-# ---------------------------------------------------------------------
+
 @app.route("/ficha/<id>")
 def ficha(id):
     dados = load_ficha(id)
@@ -421,14 +422,14 @@ def ficha(id):
 
     return render_template("ver_ficha.html", ficha=dados)
 
-# ---------------------------------------------------------------------
+
 # ERROS
-# ---------------------------------------------------------------------
+
 @app.errorhandler(500)
 def internal(e):
     logger.exception(e)
     return render_template("500.html", error=str(e)), 500
 
-# ---------------------------------------------------------------------
+
 if __name__ == "__main__":
     app.run(debug=True)
