@@ -19,22 +19,16 @@ Criação de arquétipos, vantagens, perícias e regras personalizadas
 
 # Tecnologias
 
-Back-end
-Python (Flask)
+Back-end | Python (Flask)
 
-Front-end
-HTML, CSS, JavaScript
+Front-end | HTML, CSS, JavaScript
 
-Armazenamento
-JSON
+Armazenamento | JSON
 
-Deploy
-Render
+Deploy | Render
 
 
-
-
-Status
+# Status
 Em desenvolvimento — algumas funcionalidades ainda estão sendo implementadas.
 
 
