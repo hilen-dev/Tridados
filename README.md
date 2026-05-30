@@ -19,11 +19,18 @@ Criação de arquétipos, vantagens, perícias e regras personalizadas
 
 # Tecnologias
 
-Camada        | Tecnologia
-Back-end      | Python (Flask)
-Front-end     | HTML, CSS, JavaScript
-Armazenamento | JSON
-Deploy        | Render
+Back-end
+Python (Flask)
+
+Front-end
+HTML, CSS, JavaScript
+
+Armazenamento
+JSON
+
+Deploy
+Render
+
 
 
 
